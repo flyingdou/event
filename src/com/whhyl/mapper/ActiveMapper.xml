@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.whhyl.dao.ActiveMapper" >
+  <resultMap id="BaseResultMap" type="com.whhyl.entity.Active" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="registration_deadline" property="registrationDeadline" jdbcType="TIMESTAMP" />
+    <result column="vote_deadline" property="voteDeadline" jdbcType="TIMESTAMP" />
+    <result column="referee_model" property="refereeModel" jdbcType="INTEGER" />
+    <result column="referee" property="referee" jdbcType="INTEGER" />
+    <result column="win_count" property="winCount" jdbcType="INTEGER" />
+    <result column="vote_parise" property="voteParise" jdbcType="INTEGER" />
+    <result column="bet_min" property="betMin" jdbcType="INTEGER" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="poster" property="poster" jdbcType="VARCHAR" />
+    <result column="creator" property="creator" jdbcType="INTEGER" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="balance_type" property="balanceType" jdbcType="VARCHAR" />
+    <result column="status"  property="status" jdbcType="VARCHAR" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from tb_active
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.whhyl.entity.Active"  useGeneratedKeys="true" keyProperty="id" >
+    insert into tb_active (id, name, registration_deadline, 
+      vote_deadline, referee_model, referee, 
+      win_count, vote_parise, bet_min, 
+      remark, poster, creator, 
+      create_date, balance_type, status
+      
+      )
+    values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{registrationDeadline,jdbcType=TIMESTAMP}, 
+      #{voteDeadline,jdbcType=TIMESTAMP}, #{refereeModel,jdbcType=INTEGER}, #{referee,jdbcType=INTEGER}, 
+      #{winCount,jdbcType=INTEGER}, #{voteParise,jdbcType=INTEGER}, #{betMin,jdbcType=INTEGER}, 
+      #{remark,jdbcType=VARCHAR}, #{poster,jdbcType=VARCHAR}, #{creator,jdbcType=INTEGER}, 
+      #{createDate,jdbcType=TIMESTAMP}, #{balanceType, jdbcType=VARCHAR}, #{status, jdbcType=VARCHAR}
+      )
+      
+      
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.whhyl.entity.Active" >
+    update tb_active
+    set name = #{name,jdbcType=VARCHAR},
+      registration_deadline = #{registrationDeadline,jdbcType=TIMESTAMP},
+      vote_deadline = #{voteDeadline,jdbcType=TIMESTAMP},
+      referee_model = #{refereeModel,jdbcType=INTEGER},
+      referee = #{referee,jdbcType=INTEGER},
+      win_count = #{winCount,jdbcType=INTEGER},
+      vote_parise = #{voteParise,jdbcType=INTEGER},
+      bet_min = #{betMin,jdbcType=INTEGER},
+      remark = #{remark,jdbcType=VARCHAR},
+      poster = #{poster,jdbcType=VARCHAR},
+      creator = #{creator,jdbcType=INTEGER},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      balance_type = #{balanceType,jdbcType=VARCHAR},
+      status = #{status, jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select id, name, registration_deadline, vote_deadline, referee_model, referee, win_count, 
+    vote_parise, bet_min, remark, poster, creator, create_date, balance_type, status
+    from tb_active
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select id, name, registration_deadline, vote_deadline, referee_model, referee, win_count, 
+    vote_parise, bet_min, remark, poster, creator, create_date, balance_type, status
+    from tb_active
+  </select>
+  
+   
+  
+  <select id="selectOrderBy" resultType="Map" parameterType="Map" >
+    select a.id, (select count(*) from tb_vote where active_id = a.id ) follow, a.name, a.registration_deadline, a.vote_deadline, a.referee_model, a.referee, a.win_count, 
+    a.vote_parise, a.bet_min, a.remark, a.poster, a.creator, a.create_date, balance_type, status
+    from tb_active a where 1=1 
+    <if test="_parameter != null and _parameter != ''">
+         
+	   <if test="status == 0">
+	        and a.vote_deadline &gt;= now()
+	    </if>
+	    <if test="status == 1">
+	        and a.vote_deadline &lt; now()
+	    </if>
+	  
+        <if test="orderBy == 'follow'">
+             order by follow desc
+        </if>
+        <if test="orderBy == 'createDate'">
+             order by create_date desc
+        </if>
+         
+    </if>
+  </select>
+  
+  
+  
+  <select id="detail" resultType="Map" parameterType="Integer" >
+	SELECT 
+		  count(DISTINCT(aw.id)) as workCount , count(DISTINCT (v.member)) as voteCount, count(DISTINCT(b.member)) as betCount,
+		  m.nick as creatorName, m.image as creatorImage, mm.nick as refereeName, mm.image as refereeImage, 
+		  mm.id as refereeId, a.id, a.name, a.registration_deadline, a.vote_deadline, a.referee_model,  
+		  a.referee, a.win_count,a.vote_parise, a.bet_min, a.remark, a.poster, a.creator, a.create_date, a.balance_type, a.status,  
+		  (CASE WHEN a.registration_deadline &gt;= now() THEN 0 ELSE 1 END) as hasDead,
+		  (SELECT SUM(bet_money) as totalBet FROM tb_betting WHERE active_id = a.id) as totalBet 
+	FROM 
+	
+		tb_active a 
+		INNER JOIN tb_member m ON a.creator = m.id 
+		LEFT JOIN tb_member mm  ON a.referee = mm.id 
+		LEFT JOIN tb_active_work aw ON aw.active_id = a.id 
+		LEFT JOIN tb_vote v ON v.active_id = a.id 
+		LEFT JOIN tb_betting b ON b.active_id = a.id 
+		
+	WHERE 
+	     a.id = #{id} 
+  </select>
+  
+  <select id="activeExpert" resultType="Map" parameterType="Integer" >
+	 SELECT 
+	 		m.id AS id, m.image AS image, m.nick AS name, '专家' AS role   
+	 FROM 
+	 		tb_expert_forecast ef, tb_member m 
+	 WHERE 
+	 		ef.member = m.id  
+	 AND 
+	 		ef.active_id = #{id} 
+  </select>
+  
+  <select id="goingOnActives" resultType="Map">
+	SELECT 
+	         id, name, registration_deadline, vote_deadline, referee_model, referee, win_count, vote_parise,
+	         bet_min, remark, poster, creator, create_date, balance_type, status
+	FROM 
+	         tb_active 
+	WHERE 
+		     status = 0
+		      
+	ORDER BY  
+   		     create_date DESC
+  </select>
+  
+  <select id="overActives" resultType="Map">
+	SELECT 
+			 id, name, registration_deadline, vote_deadline, referee_model, referee, win_count, vote_parise,
+	         bet_min, remark, poster, creator, create_date, balance_type, status
+	FROM 
+			 tb_active
+	WHERE 
+			 status in (1,2) 
+    ORDER BY  
+   			 create_date DESC
+  </select>
+  
+  <select id="searchActive" parameterType="Map" resultType="Map">
+  	select id,name,win_count,poster from tb_active 
+		where id not in(
+			select active_id from tb_active_work where work_id = #{workId}
+		) AND vote_deadline >= #{now} 
+  	<if test="activeName != null and activeName != ''">
+  		AND name like #{activeName}
+  	</if>
+  </select>
+  
+  
+  
+  <!-- 查询观众决定胜负且已到了投票截止日期的活动 -->
+  <select id="getDecisoinActive" resultType="Map">
+      select id, win_count  from tb_active where status = 0 and referee_model = 1 and vote_deadline &lt; now() 
+  </select>
+  
+  <!-- 查询需要判定的数据 -->
+  <select id="getDecisionData" parameterType="Map" resultType="Map" >
+	SELECT 
+	       aw.* 
+	FROM 
+	       tb_active_work  aw, 
+	       (select  count(*) as voteCount, active_id,contestant from tb_vote  GROUP BY token ) as v 
+	WHERE 
+	       aw.active_id = #{active} 
+	AND 
+	       aw.active_id = v.active_id
+	AND 
+	       aw.work_id = v.contestant 
+	ORDER BY 
+		   v.voteCount desc limit #{win_count} 
+  </select>
+  
+  
+  <!-- 修改判定数据 -->
+  <update id="updateDecision" parameterType="Map" >
+       update tb_active_work
+	       <set>
+	          <if test="active_id != null and active_id != '' " >
+	              active_id = #{active_id},
+	          </if>
+	          <if test="work_id != null and work_id != '' " >
+	              work_id = #{work_id},
+	          </if>
+	          <if test="pay_rate != null and pay_rate != '' " >
+	              pay_rate = #{pay_rate},
+	          </if>
+	          <if test="win_rate != null and win_rate != '' " >
+	              win_rate = #{win_rate},
+	          </if>
+	          <if test="value != null and value != '' " >
+	              value = #{value},
+	          </if>
+	          <if test="ranke != null and ranke != '' " >
+	              ranke = #{ranke}
+	          </if>
+	       </set>
+       where id = #{id}
+  </update>
+  
+  
+  <!-- 查询需要结算的数据 -->
+  <select id="getBalanceDataList" resultMap="BaseResultMap">
+  
+         <!-- 默认查询观众投票和裁判决定胜负的数据 -->
+         select * from tb_active where status = 0  and  vote_deadline &lt; now() 
+         
+  </select>
+  
+  <select id="getActiveTobeUpdate" resultType="Map">
+			  select txd.* from (
+			   		select id, (CASE WHEN now() &gt;= vote_deadline THEN 1 ELSE 0 END ) AS hasDead, referee_model from tb_active where status = 0 
+			  ) as txd where txd.hasDead = 1 
+  </select>
+  
+  
+  
+  
+  
+  
+</mapper>

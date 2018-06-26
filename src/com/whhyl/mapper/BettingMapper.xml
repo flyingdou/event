@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.whhyl.dao.BettingMapper" >
+  <resultMap id="BaseResultMap" type="com.whhyl.entity.Betting" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="active_id" property="activeId" jdbcType="INTEGER" />
+    <result column="contestant" property="contestant" jdbcType="INTEGER" />
+    <result column="member" property="member" jdbcType="INTEGER" />
+    <result column="bet_money" property="betMoney" jdbcType="INTEGER" />
+    <result column="auto_time" property="autoTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from tb_betting
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.whhyl.entity.Betting"  useGeneratedKeys="true" keyProperty="id">
+    insert into tb_betting (id, active_id, contestant, 
+      member, bet_money, auto_time)
+    values (#{id,jdbcType=INTEGER}, #{activeId,jdbcType=INTEGER}, #{contestant,jdbcType=INTEGER}, 
+      #{member,jdbcType=INTEGER}, #{betMoney,jdbcType=INTEGER}, #{autoTime,jdbcType=TIMESTAMP})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.whhyl.entity.Betting" >
+    update tb_betting
+    set active_id = #{activeId,jdbcType=INTEGER},
+      contestant = #{contestant,jdbcType=INTEGER},
+      member = #{member,jdbcType=INTEGER},
+      bet_money = #{betMoney,jdbcType=INTEGER},
+      auto_time = #{autoTime,jdbcType=TIMESTAMP},
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select id, active_id, contestant, member, bet_money, auto_time 
+    from tb_betting
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select id, active_id, contestant, member, bet_money, auto_time 
+    from tb_betting
+  </select>
+  <select id="getMinBetMoneyByActiveId" resultType="int" parameterType="String">
+  	select IFNULL(t.bet_min,0) bet_min from (
+	 select bet_min,count(id) from tb_active where id = #{activeId}
+	) t
+  </select>
+  
+  
+  <!-- 查询投注表中的获胜用户的投注记录  -->
+  <select id="winMemberBetting" parameterType="Map" resultMap="BaseResultMap" >
+    SELECT 
+	      b.id, b.active_id, b.contestant, b.member, sum(b.bet_money) as bet_money, b.auto_time  
+	FROM 
+		  tb_betting b, (select active_id, work_id from tb_active_work where value = 1) aw  
+	WHERE 
+		  b.active_id = aw.active_id 
+	AND 
+		  b.contestant = aw.work_id 
+    AND   
+          b.active_id = #{active_id}
+          
+	GROUP BY b.member 
+  </select>
+   
+   
+   <!-- 查询胜利用户的投注数据，包含赔率  -->
+   <select id="winBetting" parameterType="Map" resultType="Map" >
+	SELECT 
+	      b.id, b.active_id, b.contestant, b.member, sum(b.bet_money) as bet_money, b.auto_time, aw.pay_rate  
+	FROM 
+		  tb_betting b, (select active_id, work_id, pay_rate from tb_active_work where ISNULL(value) AND NOT ISNULL(ranke) ) aw  
+	WHERE 
+		  b.active_id = aw.active_id 
+	AND 
+		  b.contestant = aw.work_id 
+    AND   
+          b.active_id = #{active_id}
+		  
+	GROUP BY b.member 
+   </select>
+    
+  
+  
+  
+  
+  
+  
+  
+</mapper>

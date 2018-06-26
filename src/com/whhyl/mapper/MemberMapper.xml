@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.whhyl.dao.MemberMapper">
+	<resultMap id="BaseResultMap" type="com.whhyl.entity.Member">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="nick" property="nick" jdbcType="VARCHAR" />
+		<result column="sex" property="sex" jdbcType="VARCHAR" />
+		<result column="birthday" property="birthday" jdbcType="TIMESTAMP" />
+		<result column="image" property="image" jdbcType="VARCHAR" />
+		<result column="mobilephone" property="mobilephone" jdbcType="VARCHAR" />
+		<result column="password" property="password" jdbcType="VARCHAR" />
+		<result column="longitude" property="longitude" jdbcType="VARCHAR" />
+		<result column="latitude" property="latitude" jdbcType="VARCHAR" />
+		<result column="province" property="province" jdbcType="VARCHAR" />
+		<result column="city" property="city" jdbcType="VARCHAR" />
+		<result column="county" property="county" jdbcType="VARCHAR" />
+		<result column="register_date" property="registerDate" jdbcType="TIMESTAMP" />
+		<result column="login_time" property="loginTime" jdbcType="TIMESTAMP" />
+		<result column="third_Type" property="thirdType" jdbcType="VARCHAR" />
+		<result column="wechat_id" property="wechatId" jdbcType="VARCHAR" />
+		<result column="QQ_id" property="qqId" jdbcType="VARCHAR" />
+		<result column="sina_id" property="sinaId" jdbcType="VARCHAR" />
+		<result column="login_token" property="loginToken" jdbcType="VARCHAR" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="address" property="address" jdbcType="VARCHAR" />
+	</resultMap>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from tb_member
+		where id = #{id,jdbcType=BIGINT}
+	</delete>
+	<insert id="insert" parameterType="com.whhyl.entity.Member" useGeneratedKeys="true" keyProperty="id" >
+		insert into tb_member (id, nick, sex,
+		birthday, image, mobilephone,
+		password, longitude, latitude,
+		province, city, county,
+		register_date, login_time, third_Type,
+		wechat_id, QQ_id, sina_id,
+		login_token, name, address
+		)
+		values (#{id,jdbcType=BIGINT}, #{nick,jdbcType=VARCHAR},
+		#{sex,jdbcType=VARCHAR},
+		#{birthday,jdbcType=TIMESTAMP}, #{image,jdbcType=VARCHAR}, #{mobilephone,jdbcType=VARCHAR},
+		#{password,jdbcType=VARCHAR}, #{longitude,jdbcType=VARCHAR},
+		#{latitude,jdbcType=VARCHAR},
+		#{province,jdbcType=VARCHAR}, #{city,jdbcType=VARCHAR}, #{county,jdbcType=VARCHAR},
+		#{registerDate,jdbcType=TIMESTAMP}, #{loginTime,jdbcType=TIMESTAMP},
+		#{thirdType,jdbcType=VARCHAR},
+		#{wechatId,jdbcType=VARCHAR}, #{qqId,jdbcType=VARCHAR}, #{sinaId,jdbcType=VARCHAR},
+		#{loginToken,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR},
+		#{address,jdbcType=VARCHAR}
+		)
+	</insert>
+	<update id="updateByPrimaryKey" parameterType="com.whhyl.entity.Member">
+		update tb_member
+		<set>
+			<if test="nick != null and nick != ''">
+				nick = #{nick,jdbcType=VARCHAR},
+			</if>
+			<if test="sex != null and sex != ''">
+				sex = #{sex,jdbcType=VARCHAR},
+			</if>
+			<if test="birthday != null and birthday != ''">
+				birthday = #{birthday,jdbcType=TIMESTAMP},
+			</if>
+			<if test="image != null and image != ''">
+				image = #{image,jdbcType=VARCHAR},
+			</if>
+			<if test="mobilephone != null and mobilephone != ''">
+				mobilephone = #{mobilephone,jdbcType=VARCHAR},
+			</if>
+			<if test="password != null and password != ''">
+				password = #{password,jdbcType=VARCHAR},
+			</if>
+			<if test="longitude != null and longitude != ''">
+				longitude = #{longitude,jdbcType=VARCHAR},
+			</if>
+			<if test="latitude != null and latitude != ''">
+				latitude = #{latitude,jdbcType=VARCHAR},
+			</if>
+			<if test="province != null and province != ''">
+				province = #{province,jdbcType=VARCHAR},
+			</if>
+			<if test="city != null and city != ''">
+				city = #{city,jdbcType=VARCHAR},
+			</if>
+			<if test="county != null and county != ''">
+				county = #{county,jdbcType=VARCHAR},
+			</if>
+			<if test="registerDate != null and registerDate != ''">
+				register_date = #{registerDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="loginTime != null and loginTime != ''">
+				login_time = #{loginTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="thirdType != null and thirdType != ''">
+				third_Type = #{thirdType,jdbcType=VARCHAR},
+			</if>
+			<if test="wechatId != null and wechatId != ''">
+				wechat_id = #{wechatId,jdbcType=VARCHAR},
+			</if>
+			<if test="qqId != null and qqId != ''">
+				QQ_id = #{qqId,jdbcType=VARCHAR},
+			</if>
+			<if test="sinaId != null and sinaId != ''">
+				sina_id = #{sinaId,jdbcType=VARCHAR},
+			</if>
+			<if test="loginToken != null and loginToken != ''">
+				login_token = #{loginToken,jdbcType=VARCHAR},
+			</if>
+			<if test="name != null and name != ''">
+				name = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="address != null and address != ''">
+				address = #{address,jdbcType=VARCHAR}
+			</if>
+		</set>
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Long">
+		select id, nick, sex, birthday, image, mobilephone, password, longitude,
+		latitude,
+		province, city, county, register_date, login_time, third_Type, wechat_id,
+		QQ_id,
+		sina_id, login_token, name, address
+		from tb_member
+		where id = #{id,jdbcType=BIGINT}
+	</select>
+	<select id="selectAll" resultMap="BaseResultMap">
+		select id, nick, sex, birthday, image, mobilephone, password, longitude,
+		latitude,
+		province, city, county, register_date, login_time, third_Type, wechat_id,
+		QQ_id,
+		sina_id, login_token, name, address
+		from tb_member
+	</select>
+	<select id="checkMobilePhone" resultType="java.lang.Integer"
+		parameterType="java.lang.String">
+		select count(id) from tb_member where mobilephone = #{mobilephone}
+	</select>
+	<select id="checkActiveCreator" resultType="int" parameterType="Map">
+		select count(id) from tb_active where id = #{activeId} and creator =
+		#{memberId}
+	</select>
+	<select id="checkActiveReferee" resultType="int" parameterType="Map">
+		select count(id) from tb_active where id = #{activeId} and referee =
+		#{memberId}
+	</select>
+	<select id="checkActiveExpert" resultType="int" parameterType="Map">
+		select count(id) from tb_expert_forecast where active_id = #{activeId}
+		and member = #{memberId}
+	</select>
+
+	<select id="findActiveByMember" resultType="Map" parameterType="Map">
+		<!-- 我发起的活动 -->
+		<if test="type == 0">
+			SELECT * FROM tb_active WHERE creator = #{member}
+		</if>
+
+		<!-- 我参加的活动 -->
+		<if test="type == 1">
+			SELECT DISTINCT ee.* FROM (
+			SELECT a.* FROM tb_active a,tb_vote v
+			WHERE a.id = v.active_id AND v.member = #{member}
+			UNION ALL
+			SELECT a.* FROM tb_active a,tb_betting b
+			WHERE a.id = b.active_id AND b.member = #{member}
+			UNION ALL
+			SELECT * FROM tb_active
+			WHERE referee = #{member}
+			UNION ALL
+			SELECT a.* FROM tb_active a,tb_expert_forecast e
+			WHERE a.id = e.active_id AND e.member = #{member}
+			) ee
+		</if>
+	</select>
+
+<select id="getCountByActive" resultType="Map" parameterType="Integer">
+select * from (
+   (select count(temp.member) betCount from  
+             (select DISTINCT member from tb_active a, tb_betting b where a.id = b.active_id AND a.id = #{activeId} ) temp
+   ) betCount,
+   (select count(temp.member) voteCount from 
+             (select DISTINCT member from tb_active a, tb_vote v where a.id = v.active_id AND a.id = #{activeId} ) temp 
+   ) voteCount
+)
+</select>
+
+
+	<!-- 我的投票(已结束) -->
+	<select id="myVoted" parameterType="Map" resultType="Map">
+		select a.id,a.name activeName,w.name worksName,IFNULL(sum(b.bet_money),0) betMoney from 
+		tb_vote v inner join tb_active a on v.active_id = a.id inner join tb_works w
+		on v.contestant = w.id left join tb_betting b on w.id = b.contestant
+		where v.member = #{memberId} and a.vote_deadline &lt;= #{date} 
+		group by v.id
+	</select>
+
+	<!-- 我的投票(进行中) -->
+	<select id="myVoting" parameterType="Map" resultType="Map">
+		select a.id,a.name activeName,w.name worksName,IFNULL(sum(b.bet_money),0) betMoney from 
+		tb_vote v inner join tb_active a on v.active_id = a.id inner join tb_works w
+		on v.contestant = w.id left join tb_betting b on w.id = b.contestant
+		where v.member = #{memberId} and a.vote_deadline &gt; #{date} 
+		group by v.id
+	</select>
+	
+	<!-- 根据用户id查询作品列表 -->
+	<select id="listWorksByMemberId" parameterType="String" resultType="Map">
+		select t.*, 
+		(select image from tb_work_image where work_id = t.id limit 1) image
+		from (
+			select w.id, w.name, m.nick author, w.partake_date partakeDate, 
+			w.remark, aw.win_rate winRate
+			from tb_works w inner join tb_active_work aw on 
+			w.id = aw.work_id inner join tb_member m on w.author = m.id 
+			where m.id = #{memberId} 
+		) t
+	</select>
+
+	<!-- 根据会员id查询参加活动的次数 -->
+	<select id="getParticipateActiveCountByMemberId" parameterType="String" resultType="int">
+		select count(t.id) from (
+			SELECT DISTINCT f.id FROM (
+						SELECT  a.*  FROM tb_active a,tb_vote v
+				        WHERE a.id = v.active_id  AND v.member = #{memberId}
+				UNION ALL
+						SELECT  a.*  FROM tb_active a,tb_betting b
+						WHERE a.id = b.active_id  AND b.member = #{memberId}
+				UNION ALL
+						SELECT  *  FROM tb_active 
+						WHERE referee = #{memberId}
+				UNION ALL
+						SELECT  a.*  FROM tb_active a,tb_expert_forecast e
+						WHERE a.id = e.active_id AND e.member = #{memberId}
+			) f
+		) t
+	</select>
+
+	<!-- 根据会员id查询投票次数 -->
+	<select id="getVoteCountByMemberId" parameterType="String" resultType="int">
+		select count(id) from tb_vote where member = #{memberId}
+	</select>
+	
+	<!--  -->
+	<select id="selectMembers" parameterType="Map" resultType="Map" >
+	    select 
+	            dou1.id, dou1.nick, dou1.image,count(dou1.vid) as voteCount, count(bid) as betCount
+		from 
+			    (select m.id, m.nick, m.image, v.id as vid from tb_member m LEFT JOIN tb_vote v ON m.id = v.member) dou1
+			 
+		LEFT JOIN 
+				(select m.id, b.id as bid from tb_member m, tb_betting b where m.id = b.member) dou2 
+				
+		ON dou1.id = dou2.id 
+		
+		WHERE 1=1 
+		
+		AND dou1.id != #{member}
+		
+		<if test="dou != '' and dou != null">
+		   AND dou1.nick like #{dou}
+		</if>
+		
+		GROUP BY dou1.id 
+		
+	</select>
+	
+	
+	
+	<!-- 根据openid查询是否已经存在 -->
+	<select id="checkByOpenId" parameterType="Map" resultMap="BaseResultMap">
+	   select * from tb_member where wechat_id = #{openid}
+	</select>
+	
+	
+</mapper>

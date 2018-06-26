@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.whhyl.dao.LoginMapper" >
+  <resultMap id="BaseResultMap" type="com.whhyl.entity.Member" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="nick" property="nick" jdbcType="VARCHAR" />
+    <result column="sex" property="sex" jdbcType="VARCHAR" />
+    <result column="birthday" property="birthday" jdbcType="TIMESTAMP" />
+    <result column="image" property="image" jdbcType="VARCHAR" />
+    <result column="mobilephone" property="mobilephone" jdbcType="VARCHAR" />
+    <result column="password" property="password" jdbcType="VARCHAR" />
+    <result column="longitude" property="longitude" jdbcType="VARCHAR" />
+    <result column="latitude" property="latitude" jdbcType="VARCHAR" />
+    <result column="province" property="province" jdbcType="VARCHAR" />
+    <result column="city" property="city" jdbcType="VARCHAR" />
+    <result column="county" property="county" jdbcType="VARCHAR" />
+    <result column="register_date" property="registerDate" jdbcType="TIMESTAMP" />
+    <result column="login_time" property="loginTime" jdbcType="TIMESTAMP" />
+    <result column="third_Type" property="thirdType" jdbcType="VARCHAR" />
+    <result column="wechat_id" property="wechatId" jdbcType="VARCHAR" />
+    <result column="QQ_id" property="qqId" jdbcType="VARCHAR" />
+    <result column="sina_id" property="sinaId" jdbcType="VARCHAR" />
+    <result column="login_token" property="loginToken" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  
+  
+  <select id="login" resultMap="BaseResultMap" parameterType="Map" >
+    select id, nick, sex, birthday, image, mobilephone, password, longitude, latitude, 
+    province, city, county, register_date, login_time, third_Type, wechat_id, QQ_id, 
+    sina_id, login_token, name, address
+    from tb_member
+    where mobilephone = #{mobilephone} and password = #{password}
+  </select>
+  
+  <select id="checkThird" resultMap="BaseResultMap" parameterType="Map" >
+    select id, nick, sex, birthday, image, mobilephone, password, longitude, latitude, 
+    province, city, county, register_date, login_time, third_Type, wechat_id, QQ_id, 
+    sina_id, login_token, name, address
+    from tb_member 
+     where third_type = #{thirdType} 
+     <if test="thirdType=='W'">
+        and wechat_id = #{thirdId}
+     </if>
+     <if test="thirdType=='Q'">
+        and qq_id = #{thirdId}
+     </if>
+     <if test="thirdType=='S'">
+        and sina_id = #{thirdId}
+     </if>
+  </select>
+  
+  
+  <select id="loginById" resultMap="BaseResultMap" parameterType="Integer" >
+    select id, nick, sex, birthday, image, mobilephone, password, longitude, latitude, 
+    province, city, county, register_date, login_time, third_Type, wechat_id, QQ_id, 
+    sina_id, login_token, name, address
+    from tb_member 
+    where id = #{id}
+  </select>
+  
+</mapper>

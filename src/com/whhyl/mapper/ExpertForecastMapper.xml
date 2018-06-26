@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.whhyl.dao.ExpertForecastMapper" >
+  <resultMap id="BaseResultMap" type="com.whhyl.entity.ExpertForecast" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="active_id" property="activeId" jdbcType="INTEGER" />
+    <result column="member" property="member" jdbcType="INTEGER" />
+    <result column="contestant" property="contestant" jdbcType="INTEGER" />
+    <result column="win_probability" property="winProbability" jdbcType="INTEGER" />
+    <result column="auto_time" property="autoTime" jdbcType="TIMESTAMP" />
+    <result column="backup1" property="backup1" jdbcType="VARCHAR" />
+    <result column="backup2" property="backup2" jdbcType="VARCHAR" />
+    <result column="backup3" property="backup3" jdbcType="VARCHAR" />
+    <result column="backup4" property="backup4" jdbcType="VARCHAR" />
+    <result column="backup5" property="backup5" jdbcType="VARCHAR" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from tb_expert_forecast
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.whhyl.entity.ExpertForecast" >
+    insert into tb_expert_forecast (id, active_id, member, 
+      contestant, win_probability, auto_time, 
+      backup1, backup2, backup3, 
+      backup4, backup5)
+    values (#{id,jdbcType=INTEGER}, #{activeId,jdbcType=INTEGER}, #{member,jdbcType=INTEGER}, 
+      #{contestant,jdbcType=INTEGER}, #{winProbability,jdbcType=INTEGER}, #{autoTime,jdbcType=TIMESTAMP}, 
+      #{backup1,jdbcType=VARCHAR}, #{backup2,jdbcType=VARCHAR}, #{backup3,jdbcType=VARCHAR}, 
+      #{backup4,jdbcType=VARCHAR}, #{backup5,jdbcType=VARCHAR})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.whhyl.entity.ExpertForecast" >
+    update tb_expert_forecast
+    set active_id = #{activeId,jdbcType=INTEGER},
+      member = #{member,jdbcType=INTEGER},
+      contestant = #{contestant,jdbcType=INTEGER},
+      win_probability = #{winProbability,jdbcType=INTEGER},
+      auto_time = #{autoTime,jdbcType=TIMESTAMP},
+      backup1 = #{backup1,jdbcType=VARCHAR},
+      backup2 = #{backup2,jdbcType=VARCHAR},
+      backup3 = #{backup3,jdbcType=VARCHAR},
+      backup4 = #{backup4,jdbcType=VARCHAR},
+      backup5 = #{backup5,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select id, active_id, member, contestant, win_probability, auto_time, backup1, backup2, 
+    backup3, backup4, backup5
+    from tb_expert_forecast
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select id, active_id, member, contestant, win_probability, auto_time, backup1, backup2, 
+    backup3, backup4, backup5
+    from tb_expert_forecast
+  </select>
+</mapper>

@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.whhyl.dao.OrderMapper" >
+  <resultMap id="BaseResultMap" type="com.whhyl.entity.Order" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="no" property="no" jdbcType="VARCHAR" />
+    <result column="product_type" property="productType" jdbcType="VARCHAR" />
+    <result column="product" property="product" jdbcType="INTEGER" />
+    <result column="money" property="money" jdbcType="VARCHAR" />
+    <result column="funcoin" property="funcoin" jdbcType="VARCHAR" />
+    <result column="member" property="member" jdbcType="INTEGER" />
+    <result column="toMember" property="tomember" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="auto_time" property="autoTime" jdbcType="TIMESTAMP" />
+    <result column="remark" property="remark"  jdbcType="VARCHAR" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from tb_order
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.whhyl.entity.Order" useGeneratedKeys="true" keyProperty="id" >
+    insert into tb_order (id, no, product_type, product , money, 
+      funcoin, member, toMember, 
+      status, auto_time, remark)
+    values (
+      #{id,jdbcType=INTEGER},  #{no,jdbcType=VARCHAR},
+      #{productType,jdbcType=VARCHAR}, 
+      #{product,jdbcType=INTEGER}, #{money,jdbcType=VARCHAR}, 
+      #{funcoin,jdbcType=VARCHAR}, #{member,jdbcType=INTEGER},
+      #{tomember,jdbcType=INTEGER}, #{status,jdbcType=VARCHAR}, 
+      #{autoTime,jdbcType=TIMESTAMP}, #{remark,jdbcType=VARCHAR})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.whhyl.entity.Order" >
+    update tb_order
+    set 
+      no = #{no, jdbcType=VARCHAR},
+      product_type = #{productType,jdbcType=VARCHAR},
+      product = #{product,jdbcType=VARCHAR},
+      money = #{money,jdbcType=VARCHAR},
+      funcoin = #{funcoin,jdbcType=VARCHAR},
+      member = #{member,jdbcType=INTEGER},
+      toMember = #{tomember,jdbcType=INTEGER},
+      status = #{status,jdbcType=VARCHAR},
+      auto_time = #{autoTime,jdbcType=TIMESTAMP},
+      remark = #{remark,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select id, no, product_type, product, money, funcoin, member, toMember, status, auto_time, remark
+    from tb_order
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select id, no, product_type, product, money, funcoin, member, toMember, status, auto_time, remark
+    from tb_order
+  </select>
+  
+  <!-- 查询用户余额 -->
+  <select id="queryBalance" resultType="Double" parameterType="java.lang.Integer">
+	select (IFNULL(i.income,0) - IFNULL(o.outcome,0)) as balance 
+		from (select sum(funcoin) income from tb_order where status = 1 and toMember = #{member}) i, 
+		(select sum(funcoin) outcome from tb_order where status = 1 and member = #{member}) o 
+
+  </select>
+  
+  
+  <!-- 根据订单号查询订单信息 -->
+  <select id="findOrderByNo" resultMap="BaseResultMap" parameterType="java.lang.String">
+    select id, no, product_type, product, money, funcoin, member, toMember, status, auto_time,remark
+    from tb_order
+    where no = #{no}
+  </select>
+  
+  
+  <!-- 查询用户收入订单信息 -->
+  <select id="incomeOrder" resultType="Map"  parameterType="Integer">
+   select * from (
+    select o.remark  as name, '受赠' AS prodName, m.nick fromMemberNick, o.*
+		from tb_order o, tb_member m
+		where o.product_type = 'C' 
+		and o.member = m.id
+		and o.toMember = #{member}
+		UNION ALL 
+		select '投注获利' AS name, '结算' AS prodName, m.nick fromMemberNick, o.* 
+		from tb_order o, tb_member m 
+		where o.product_type = 'E' 
+		and o.member = m.id 
+		and o.toMember = #{member} 
+		UNION ALL 
+		select '' AS name, '充值' AS prodName, m.nick fromMemberNick, o.* 
+		from tb_order o,tb_member m
+		where o.product_type = 'A'
+		and o.status = '1' 
+		and o.member = m.id 
+		and o.toMember = #{member}
+	 ) t order by t.auto_time desc
+  </select>
+  
+  <!-- 查询用户支出订单信息 -->
+  <select id="outOrder" resultType="Map" parameterType="Integer">
+  select * from (
+	  select a.name,'投注' AS prodName, m.nick fromMemberNick, m2.nick AS toMemberNick, o.*
+			from  tb_order o  
+						INNER JOIN tb_betting b ON o.product = b.id
+			      INNER JOIN tb_works w ON b.contestant = w.id
+			      INNER JOIN tb_active_work aw ON aw.work_id = w.id 
+			      INNER JOIN tb_active a ON aw.active_id = a.id 
+			      INNER JOIN tb_member m  ON o.member = m.id
+			      INNER JOIN tb_member m2 ON o.toMember = m2.id 
+			where o.product_type = 'D'
+			and o.member = #{member}
+	
+		 UNION ALL 
+		 select '商品兑换' name, '兑换' as prodName, m.nick fromMemberNick, m2.nick as toMemberNick, o.* 
+				from tb_order o 
+					 LEFT JOIN tb_product p ON o.product = p.id 
+			         LEFT JOIN  tb_member m  ON o.member = m.id
+			         LEFT JOIN tb_member m2 ON m2.id = o.toMember 
+				where o.product_type = 'B'
+				and m.id = #{member}
+			
+		 UNION ALL 
+		 select o.remark AS name, '赠送' as prodName, m.nick as fromMemberNick, m2.nick as toMemberNick, o.* 
+				from tb_order o 
+					 LEFT JOIN tb_member m ON  o.member = m.id  
+					 LEFT JOIN tb_member m2 ON o.toMember = m2.id 
+				where o.product_type = 'C'
+				and m.id = #{member}
+	) t order by t.auto_time desc
+  </select>
+</mapper>

@@ -1,0 +1,367 @@
+<interfaces>
+	<Member name="会员相关接口">
+		<interface name="注册" link="member/register.html">
+			输入参数:
+			json : {
+				mobilephone : 手机号,
+				password : 密码,
+				longitude : 经度,
+				latitude : 纬度
+			}
+			-----------------------
+			输出参数:
+			{
+				success : true/false 成功/失败,
+				msg : 返回信息
+			}
+		</interface>
+		<interface name="完善资料" link="member/perfect.html">
+			输入参数:
+			json : {
+				id : 会员id,
+				nick : 会员昵称,
+				sex : 性别(M:男/F:女),
+				province : 省份,
+				city : 城市,
+				county : 区县,
+				image : 头像,
+				birthday : 生日
+			}
+			-----------------------
+			输出参数:
+			{
+				success : true/false 成功/失败
+			}
+		</interface>
+		<interface name="查询用户详细信息" link="member/memberInfo.html">
+			输入参数：
+				无
+			--------------------------------------------------------
+			输出参数：
+			{
+				"memberInfo": {
+			    "birthday": 生日,
+			    "activeCount": 参加活动次数,
+			    "image": 头像,
+			    "address": 地址,
+			    "city": 城市,
+			    "latitude": 纬度,
+			    "sex": 性别 M:男,F:女,
+			    "county": 区县,
+			    "loginToken": uuid,
+			    "qqId": 第三方登录id,
+			    "nick": 昵称,
+			    "password": 密码,
+			    "loginTime": 登录时间,
+			    "province": 省份,
+			    "mobilephone": 手机号,
+			    "name": 真实姓名,
+			    "wechatId": 第三方登录id,
+			    "votes": 投票次数,
+			    "id": 主键id,
+			    "sinaId": 第三方登录id,
+			    "thirdType": 第三方登录类型,
+			    "longitude": 经度,
+			    "registerDate": 注册时间
+			  },
+			  "success": true
+			}
+		</interface>
+		<interface name="我的活动" link="member/findActiveByMember.html">
+			暂无输入参数
+			--------------------------------------------------------
+			输出参数：
+			{
+				success:true/false 查询是否成功，
+				msg:提示信息，
+				list 活动列表:
+				[{
+					name:活动名称,
+					registration_deadline:报名截止时间，
+					vote_deadline:投票截止时间，
+					referee_model:裁判模式 1单胜制，2多胜制，
+					referee:裁判，
+					win_count:胜利者数量，
+					vote_parise:投票奖励funcoin数量，
+					bet_Min:最小投注funcoin数量，
+					creator:活动发起者，
+					id: 活动ID，
+					create_date: 活动发起时间，
+					remark:活动规则，
+					poster:活动海报
+				}]
+			}
+		</interface>
+		<interface name="我的投票" link="member/myVote.html">
+			输入参数：
+			json:{
+				status : 0.已结束,1.进行中
+			}
+			--------------------------------------------------------
+			输出参数：
+			{
+				success:true/false 查询是否成功，
+				msg:提示信息，
+				list 活动列表:
+				[{
+					name:活动名称,
+					bet_money:投注金额,
+					value:0.负,1.胜
+				}]
+			}
+		</interface>
+	</Member>
+	<Upload name="图片上传相关接口">
+		<interface name="上传单个文件" link="uploadFile.html">
+			输入参数:
+			myfile : 图片
+			-----------------------
+			输出参数:
+			{
+				success : true/false 成功/失败,
+				picture : 图片名称,
+				msg : 返回信息
+			}
+		</interface>
+		<interface name="上传多个文件" link="uploadFiles.html">
+			输入参数:
+				myfiles : 多个图片
+			-----------------------
+			输出参数:
+			{
+				success : true/false 成功/失败,
+				picList : 图片名称数组,
+				msg : 返回信息
+			}
+		</interface>
+	</Upload>
+	<active>
+		<interface name="发起活动" link="active/launch.html">
+			输入参数:
+			json:{
+				name:活动名称,
+				registrationDeadline:报名截止时间，
+				voteDeadline:投票截止时间，
+				refereeModel:裁判模式 1单胜制，2多胜制，
+				referee:裁判(单胜制必填，多胜制不填)，
+				winCount:胜利者数量(单胜制为1， 多胜制可以填写其他数字)，
+				voteParise:投票奖励funcoin数量，
+				betMin:最小投注funcoin数量，
+				remark:活动规则，
+				poster:活动海报
+			}
+			------------------------------------------------------------
+			输出参数:
+			{
+				success:true/false 是否成功，
+				msg:提示信息，
+				id:注册成功后的activeId
+			}
+		</interface>
+		<interface name="活动列表" link="active/activeList.html">
+			输入参数:
+			json:{
+				orderBy:follow 关注度排序 , createDate 活动发起时间排序
+			}
+			--------------------------------------------------------------------
+			输出参数: {
+				success:true/false 是否成功，
+				msg:提示信息，
+				list: 活动列表
+				[{
+					creator:活动发起者，
+					registration_deadline:报名截止时间，
+					remark:活动规则，
+					follow: 关注度(活动中的用户投票数量),
+					referee:裁判，
+					bet_Min:最小投注funcoin数量，
+					win_count:胜利者数量，
+					referee_model:裁判模式 1单胜制 2多胜制，
+					name:活动名称,
+					vote_parise:投票奖励funcoin数量，
+					id: 活动ID，
+					create_date: 活动发起时间，
+					vote_deadline:投票截止时间，
+					poster:活动海报
+				}]
+			}
+		</interface>
+
+		<interface name="活动详情" link="active/activeDetail.html">
+			输入参数:
+			json:{
+				id:活动主键
+			}
+			------------------------------------------------------------------------------
+			输出参数:
+			{
+				success:true/false 是否成功，
+				msg:提示信息，
+				detail 活动详细信息: {
+					creator: 活动发起者,
+					registration_deadline: 报名截止时间,
+					role: 当前用户相对于该活动的角色,
+					remark: 活动规则,
+					referee: 裁判,
+					bet_min: 最小投注funcoin数量,
+					win_count: 允许胜利者数量,
+					referee_model: 裁判模式 1单胜制 2多胜制,
+					name: 活动名称,
+					vote_parise: 投票奖励funcoin数量,
+					id:活动ID,
+					create_date: 活动发起时间,
+					vote_deadline: 投票截止时间,
+					poster:活动海报
+				}
+			}
+		</interface>
+	</active>
+	<Works name="作品相关接口">
+		<interface name="发布作品" link="works/releaseWorks.html">
+			输入参数:
+			json : {
+				activeId : 活动id,
+				name : 作品名称,
+				author : 作品发布者id,
+				image1 : 作品图片1,
+				image1Remark : 作品图片1描述,
+				image2 : 作品图片2,
+				image2Remark : 作品图片2描述,
+				image3 : 作品图片3,
+				image3Remark : 作品图片3描述,
+				video : 视频,
+				remark : 作品描述
+			}
+			-----------------------
+			输出参数:
+			{
+				success : true/false 成功/失败,
+				id : 作品id,
+				msg : 返回信息
+			}
+		</interface>
+		<interface name="作品列表" link="works/listWorks.html">
+			输入参数:
+			json : {
+				activeId : 活动id
+			}
+			-----------------------
+			输出参数:
+			{
+			success : true/false 成功/失败,
+			worksList:[{
+				"image2Remark": 作品图片2描述,
+				"image3": 作品图片3,
+				"image3Remark": 作品图片3描述,
+				"author": 作品发布者id,
+				"image1Remark": 作品图片1描述,
+				"payRate": 赔率,
+				"activeId": 活动id,
+				"remark": 作品描述,
+				"video": 作品视频,
+				"image1": 作品图片1,
+				"image2": 作品图片2,
+				"partakeDate": 参赛日期,
+				"name": 作品名称,
+				"id": 作品id,
+				"value": 作品胜负,
+			}]
+			}
+		</interface>
+		<interface name="作品详情" link="works/worksDetail.html">
+			输入参数:
+			json : {
+				id : 作品id
+			}
+			-----------------------
+			输出参数:
+			{
+				success : true/false 成功/失败,
+				works:{
+					"image2Remark": 作品图片2描述,
+					"image3": 作品图片3,
+					"image3Remark": 作品图片3描述,
+					"author": 作品发布者id,
+					"image1Remark": 作品图片1描述,
+					"payRate": 赔率,
+					"activeId": 活动id,
+					"remark": 作品描述,
+					"video": 作品视频,
+					"image1": 作品图片1,
+					"image2": 作品图片2,
+					"partakeDate": 参赛日期,
+					"name": 作品名称,
+					"id": 作品id,
+					"value": 作品胜负,
+				}
+			}
+		</interface>
+		<interface name="设定赔率" link="works/setTheOdds.html">
+			输入参数:
+			json : {
+				id : 作品id,
+				payRate : 赔率(1-99)
+			}
+			-----------------------
+			输出参数:
+			{
+				success : true/false 成功/失败,
+				msg : 返回信息
+			}
+		</interface>
+		<interface name="预测胜率" link="works/forecast.html">
+			输入参数:
+			json : {
+				activeId : 活动id,
+				contestant : 作品id,
+				winProbability : 胜率(1-99)
+			}
+			-----------------------
+			输出参数:
+			{
+				success : true/false 成功/失败,
+				msg : 返回信息
+			}
+		</interface>
+		<interface name="判胜/判负" link="works/judge.html">
+			输入参数:
+			json : {
+				id : 作品id,
+				value : 胜/负(Y/N)
+			}
+			-----------------------
+			输出参数:
+			{
+				success : true/false 成功/失败,
+				msg : 返回信息
+			}
+		</interface>
+		<interface name="投票" link="works/vote.html">
+			输入参数:
+			json : {
+				activeId : 活动id,
+				contestant : 作品id
+			}
+			-----------------------
+			输出参数:
+			{
+				success : true/false 成功/失败,
+				msg : 返回信息
+			}
+		</interface>
+		<interface name="投注" link="works/betting.html">
+			输入参数:
+			json : {
+				activeId : 活动id,
+				contestant : 作品id,
+				betMoney : "投注金额"
+			}
+			-----------------------
+			输出参数:
+			{
+				success : true/false 成功/失败,
+				msg : 返回信息
+			}
+		</interface>
+	</Works>
+</interfaces>

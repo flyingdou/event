@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.whhyl.dao.EvaluateMapper" >
+  <resultMap id="BaseResultMap" type="com.whhyl.entity.Evaluate" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="active_id" property="activeId" jdbcType="INTEGER" />
+    <result column="member" property="member" jdbcType="INTEGER" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
+    <result column="image1" property="image1" jdbcType="VARCHAR" />
+    <result column="image2" property="image2" jdbcType="VARCHAR" />
+    <result column="image3" property="image3" jdbcType="VARCHAR" />
+    <result column="auto_time" property="autoTime" jdbcType="TIMESTAMP" />
+    <result column="role" property="role" jdbcType="INTEGER" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from tb_evaluate
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.whhyl.entity.Evaluate" >
+    insert into tb_evaluate (id, active_id, member, 
+      content, image1, image2, 
+      image3, auto_time,role)
+    values (#{id,jdbcType=INTEGER}, #{activeId,jdbcType=INTEGER}, #{member,jdbcType=INTEGER}, 
+      #{content,jdbcType=VARCHAR}, #{image1,jdbcType=VARCHAR}, #{image2,jdbcType=VARCHAR}, 
+      #{image3,jdbcType=VARCHAR}, #{autoTime,jdbcType=TIMESTAMP}, #{role,jdbcType=INTEGER})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.whhyl.entity.Evaluate" >
+    update tb_evaluate
+    set active_id = #{activeId,jdbcType=INTEGER},
+      member = #{member,jdbcType=INTEGER},
+      content = #{content,jdbcType=VARCHAR},
+      image1 = #{image1,jdbcType=VARCHAR},
+      image2 = #{image2,jdbcType=VARCHAR},
+      image3 = #{image3,jdbcType=VARCHAR},
+      auto_time = #{autoTime,jdbcType=TIMESTAMP},
+      #{role,jdbcType=INTEGER})
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select id, active_id, member, content, image1, image2, image3, auto_time, role
+    from tb_evaluate
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select id, active_id, member, content, image1, image2, image3, auto_time, role
+    from tb_evaluate
+  </select>
+</mapper>

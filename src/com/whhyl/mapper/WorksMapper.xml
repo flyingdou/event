@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.whhyl.dao.WorksMapper" >
+  <resultMap id="BaseResultMap" type="com.whhyl.entity.Works" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="author" property="author" jdbcType="INTEGER" />
+    <result column="partake_date" property="partakeDate" jdbcType="TIMESTAMP" />
+    <result column="video" property="video" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from tb_works
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <insert id="insert" parameterType="com.whhyl.entity.Works" useGeneratedKeys="true" keyProperty="id">
+    insert into tb_works (id, name, author, partake_date, video, remark)
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, 
+      #{author,jdbcType=INTEGER}, #{partakeDate,jdbcType=TIMESTAMP},
+      #{video,jdbcType=VARCHAR},#{remark,jdbcType=VARCHAR} )
+  </insert>
+  
+  <insert id="addImageToWork" parameterType="Map" useGeneratedKeys="true" keyProperty="id">
+  	insert into tb_work_image (id, work_id, image, image_remark) 
+  	values 
+  	<foreach collection="imgs" item="img" separator=",">
+  		(#{id}, #{workId}, #{img}, #{imageRemark})
+  	</foreach>
+  </insert>
+  
+  <update id="updateByPrimaryKey" parameterType="com.whhyl.entity.Works" >
+    update tb_works 
+    <set>
+    	<if test="name != null and name != '' ">
+    		name = #{name,jdbcType=VARCHAR},
+    	</if>
+    	<if test="author != null and author != '' ">
+    		author = #{author,jdbcType=INTEGER},
+    	</if>
+    	<if test="partakeDate != null and partakeDate != '' ">
+    		partake_date = #{partakeDate,jdbcType=TIMESTAMP},
+    	</if>
+    	<if test="video != null and video != '' ">
+    		video = #{video,jdbcType=VARCHAR},
+    	</if>
+    	<if test="remark != null and remark != '' ">
+    		remark = #{remark,jdbcType=VARCHAR}
+    	</if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select id, name, author, partake_date, video, remark from tb_works
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select id, name, author, partake_date video, remark from tb_works
+  </select>
+  
+  <select id="listWroksByActiveId" resultType="Map" parameterType="java.lang.String">
+	  select t.*, 
+		(select image from tb_work_image where work_id = t.id limit 1) image
+		from (
+			select w.id, w.name, m.nick author, w.partake_date partakeDate, 
+			w.remark, aw.win_rate winRate
+			from tb_works w inner join tb_active_work aw on 
+			w.id = aw.work_id inner join tb_member m on w.author = m.id 
+			where aw.active_id = #{active_id}
+		) t
+  </select>
+  
+  <select id="getActiveIdByWorksId" resultType="int" parameterType="String">
+  	select active_id from tb_works where id = #{worksId}
+  </select>
+  
+  <insert id="insertActiveWork" parameterType="Map">
+  	insert into tb_active_work(active_id,work_id) values(#{activeId},#{workId})
+  </insert>
+  
+  <select id="getWorkDetailById" parameterType="Map" resultType="Map">
+  	select w.id, w.name, m.nick author, aw.pay_rate payRate
+		from tb_works w inner join tb_active_work aw on 
+		w.id = aw.work_id inner join tb_active a on 
+		aw.active_id = a.id inner join tb_member m on 
+		w.author = m.id where w.id = #{workId} and active_id = #{activeId}
+  </select>
+  
+  <select id="getImagesByWorkId" parameterType="String" resultType="Map">
+  	select id,image,IFNULL(image_remark,'') imageRemark from tb_work_image 
+		where work_id = #{workId}
+  </select>
+  
+  <update id="updateWorkImageRemark" parameterType="Map">
+  	update tb_work_image set image_remark = #{imageRemark} 
+  	where image = #{image}
+  </update>
+  
+  <!-- 检查当前作品在当前活动中是否被投票过 -->
+  <select id="checkHasVoted" resultType="Map" parameterType="Map">
+      select * from tb_vote where active_id = #{active} and contestant = #{contestant}  limit 1 
+  </select>
+  
+  
+  <select id="checkVoteByWork" resultType="int" parameterType="Map">
+  	select count(id) from tb_vote where active_id = #{active} and contestant = #{contestant} and member = #{memberId}
+  </select>
+  
+  <select id="getWorksRankeByActiveIdAndWorkId" parameterType="Map" resultType="String">
+  	select aw.ranke from tb_works w inner join tb_active_work aw on
+  	w.id = aw.work_id inner join tb_active a on aw.active_id = a.id
+  	where a.id = #{activeId} and w.id = #{workId}
+  </select>
+  
+  <select id="listWorksRankeByActiveId" parameterType="String" resultType="String">
+  	select aw.ranke from tb_active_work aw
+		inner join tb_active a on aw.active_id = a.id 
+		where a.id = #{activeId} and not ISNULL(aw.ranke) 
+		order by ranke
+  </select>
+  
+  <update id="updateWorkRanke" parameterType="Map">
+  	update tb_active_work set ranke = #{ranke} where id =     
+		(select id from (select id from tb_active_work where 
+		active_id = #{activeId} and work_id = #{workId})t)
+  </update>
+  
+  <update id="updateWorkWinRate" parameterType="Map">
+  	update tb_active_work set win_rate = #{winRate} where id =     
+		(select id from (select id from tb_active_work where 
+		active_id = #{activeId} and work_id = #{workId})t)
+  </update>
+  
+  <select id="getWinRateByActiveIdAndWorkId" parameterType="Map" resultType="String">
+  	select win_rate from tb_active_work aw where 
+  	active_id = #{activeId} and work_id = #{workId}
+  </select>
+  
+  <select id="getWorksWinRateByActiveIdAndWorkId" parameterType="Map" resultType="String">
+  	select aw.pay_rate payRate from tb_works w inner join tb_active_work aw on
+  	w.id = aw.work_id inner join tb_active a on aw.active_id = a.id
+  	where a.id = #{activeId} and w.id = #{workId}
+  </select>
+  
+  <update id="updateWorkPayRate" parameterType="Map">
+  	update tb_active_work set pay_rate = #{payRate} where id =     
+		(select id from (select id from tb_active_work where 
+		active_id = #{activeId} and work_id = #{workId})t)
+  </update>
+  
+  <!-- 查询需要结算的多胜制活动 -->
+  <select id="findActives" resultType="Map">
+    select id, win_count, creator from tb_active where  referee_model = '2' and vote_deadline &lt;= now()
+  </select>  
+  
+ 
+  
+  <!-- 将betMoneyCount查询出来 -->
+  <select id="betMoneyCount" resultType="Integer" parameterType="Integer">
+    select sum(bet_money) betMoneyCount 
+    	from
+    	tb_betting 
+    	where 
+    	active_id = #{active_id}
+  </select>
+  
+  <insert id="addActiveAndWork" parameterType="List">
+		  insert tb_active_work(active_id,work_id) values
+		  <foreach collection="list" item="item" separator=",">
+		  	(#{item.activeId},#{item.workId})
+		  </foreach>
+  </insert>
+  
+  <select id="listWinnerByActiveId" parameterType="String" resultType="Map">
+	  select b.*, (select count(t.id) from (
+			SELECT DISTINCT a.id,a.member FROM (
+				SELECT a.id,v.member FROM tb_active a,tb_vote v
+				WHERE a.id = v.active_id AND v.member = 1
+				UNION ALL
+				SELECT a.id,b.member FROM tb_active a,tb_betting b
+				WHERE a.id = b.active_id AND b.member = 1
+				UNION ALL
+				SELECT id,referee FROM tb_active
+				WHERE referee = 1
+				UNION ALL
+				SELECT a.id,e.member FROM tb_active a,tb_expert_forecast e
+				WHERE a.id = e.active_id AND e.member = 1
+			) a
+		) t where t.member = b.id) activeCount, 
+		(select count(id) from tb_vote where member = b.id) voteCount from (
+		select m.id,m.nick,m.image,sum(funcoin) funcion
+		from tb_order o inner join tb_member m on o.toMember = m.id 
+		where o.status = 3 and o.product_type = 'E'
+		and product = #{activeId} group by m.id) b
+  </select>
+  
+  <select id="listWorkRankByActiveId" parameterType="String" resultType="Map">
+  	select t.*,(
+			select IFNULL(image,'') from tb_work_image
+			where work_id = t.id limit 1) image
+		from (
+			select w.id,w.name,m.nick author,w.partake_date partakeDate,
+			aw.ranke from tb_works w inner join tb_active_work aw 
+			on w.id = aw.work_id inner join tb_member m on
+			w.author = m.id where aw.ranke is not null
+			and aw.active_id = #{activeId} order by aw.ranke asc
+		) t
+  </select>
+</mapper>
