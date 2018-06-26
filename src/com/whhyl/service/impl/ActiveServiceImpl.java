@@ -49,7 +49,7 @@ public class ActiveServiceImpl implements ActiveService {
 	@Override
 	public JSONObject launch(JSONObject obj) {
 		Active active = new Active();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		JSONObject ret = new JSONObject();
 		try {
 			// 活动名称

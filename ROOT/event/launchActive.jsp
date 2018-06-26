@@ -206,7 +206,7 @@
 					<li class="mui-table-view-cell">
 						<a  href="javascript:void(0)">
 							报名截止时间<span class="mui-pull-right" style="width: 50%;">
-								<div id="demo4" data-options='{"type":"date","value":"2015-10-10","beginYear":2010,"endYear":2020}' class=" btn mui-btn mui-btn-block btn2 results dou_init_date"  >{{model.registrationDeadline}}</div>
+								<div id="demo4" data-options='{"type":"datetime","value":"2015-10-10 12:01","beginYear":2010,"endYear":2020}' class=" btn mui-btn mui-btn-block btn2 results dou_init_date"  >{{model.registrationDeadline}}</div>
 							</span> 
 						</a>	
 
@@ -214,7 +214,7 @@
 					<li class="mui-table-view-cell">
 						<a  href="javascript:void(0)">
 							投票截止时间<span class="mui-pull-right" style="width: 50%;">
-								<div id='demo4' data-options='{"type":"date","value":"2015-10-10","beginYear":2010,"endYear":2020}' class="btn mui-btn mui-btn-block btn2 results dou_init_date"  >{{model.voteDeadline}}</div>
+								<div id='demo4' data-options='{"type":"datetime","value":"2015-10-10 12:01","beginYear":2010,"endYear":2020}' class="btn mui-btn mui-btn-block btn2 results dou_init_date"  >{{model.voteDeadline}}</div>
 							</span>
 
 						</a>
@@ -581,8 +581,12 @@ function clearLaunch() {
 			var y = today.getFullYear();
 			var M = today.getMonth() + 1;
 			var d = today.getDate();
+			var H = today.getHours();
+			var m = today.getMinutes();
 			M = add(M);
 			d = add(d);
+			H = add(H);
+			m = add(m);
 
 			function add(i) {
 				if(i < 10) {
@@ -590,7 +594,7 @@ function clearLaunch() {
 				}
 				return i;
 			}
-		    var time = y + "-" + M + "-" + d;
+		    var time = y + "-" + M + "-" + d + " " + H + ":" + m;
 		    
 		   if (douData.model.registrationDeadline == undefined) {
 			   douData.model.registrationDeadline = time;
@@ -627,7 +631,7 @@ function clearLaunch() {
 			       	var M = 11;
 			        var d = today.getDate();
 					var picker = new $.DtPicker({//设置日历初始视图模式
-						type: "date",//真正的月份比写的多一个月。  type的类型你还是可以选择date, datetime month time  hour 
+						type: "datetime",//真正的月份比写的多一个月。  type的类型你还是可以选择date, datetime month time  hour 
                			beginDate:new Date(),//设置开始日期   
                			endDate: new Date(y, M, d)//设置结束日期    //真正的是10.21
 					});
@@ -643,7 +647,7 @@ function clearLaunch() {
 					 * rs.h 时，用法同年
 					 * rs.i 分（minutes 的第二个字母），用法同年
 					 */
-	                var datetext=e.y.text+"-"+e.m.text+"-"+e.d.text;
+	                var datetext=e.y.text+"-"+e.m.text+"-"+e.d.text + " " + e.h.text + ":" + e.i.text;
 					/* btn.innerText=datetext; 
 					 * 给vue变量赋值
 					 */
