@@ -235,7 +235,7 @@ public class ActiveServiceImpl implements ActiveService {
 					map3.put("image", map.get("refereeImage"));
 					listDou.add(0, map3);
 				}
-				JSONObject detail = JsonUtils.MapToJsonDateFormat(map, "yyyy-MM-dd");
+				JSONObject detail = JsonUtils.MapToJsonDateFormat(map, "yyyy-MM-dd HH:mm");
 				JSONArray activeExperts = JsonUtils.ListMapToJsonDateFormat(listDou, "yyyy-MM-dd");
 				ret.accumulate("success", true).accumulate("msg", "OK").accumulate("detail", detail)
 						.accumulate("activeExperts", activeExperts);

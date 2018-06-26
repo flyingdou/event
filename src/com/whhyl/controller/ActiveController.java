@@ -98,7 +98,6 @@ public class ActiveController {
 			// 接收请求参数
 			JSONObject obj = JSONObject.fromObject(URLDecoder.decode(json, "UTF-8"));
 			obj.accumulate("currentMember", member.getId());
-			System.err.println("hhhh");
 			// 调用后台业务逻辑
 			ret = activeService.detail(obj);
 			model.addAttribute("json", ret);
