@@ -478,7 +478,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		<script src="event/js/jquery.js" type="text/javascript"></script>
 		<script src="event/js/mui.picker.min.js" type="text/javascript" ></script>
 		<script src="event/js/vue.min.js"></script>
-		
+		<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 		
 		<script type="text/javascript">
 		  $(function(){
@@ -496,7 +496,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 				  success: function (sign) {
 					  sign = JSON.parse(sign);
 						wx.config({
-							    debug: true, 
+							    debug: false, 
 							    appId: sign.appid,
 							    timestamp: sign.timestamp,
 							    nonceStr: sign.nonceStr,
@@ -549,12 +549,11 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			  },
 			  // vue初始化函数
 			  created: function () {
-				  var obj = active.activeDetail;
+				  var obj = this.activeDetail;
 				  obj.link = '<%=basePath%>active/activeDetail.html?json=' + encodeURI(JSON.stringify({"id":obj.id}));
 				  obj.img = '<%=basePath%>picture/' + obj.poster;
 				  obj.desc = '活动详情页面分享';
 				  
-				  console.log('link: ' + obj.link + ', img: ' + obj.img + ', desc: ' + obj.desc);
 				  wx.ready(function () {
 				        wx.onMenuShareTimeline({
 				            title: obj.name,
