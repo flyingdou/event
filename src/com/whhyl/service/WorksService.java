@@ -64,4 +64,11 @@ public interface WorksService {
 	 * 查询作品名次列表通过活动ID(按名次正序排列)
 	 */
 	JSONObject listWorkRankByActiveId(JSONObject param);
+	
+	/**
+	 * 查询活动获胜名额
+	 * @param param
+	 * @return
+	 */
+	JSONObject getWinnerCount(JSONObject param);
 }
