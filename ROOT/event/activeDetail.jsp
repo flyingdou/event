@@ -462,7 +462,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 							</div>						
 						</div>
 						<div v-if="activeDetail.status == 2" >
-							<div class="box-footer-partake">
+							<div class="box-footer-partake" onclick="toDetermine()">
 								等候裁判成绩
 							</div>
 							<div class="box-footer-seeWorks" onclick="watchWorks()">
@@ -582,6 +582,12 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			 sessionStorage.setItem("activeId", activeId);
 			 location.href = "event/workRank.jsp";
 		 }
+		 
+		 function toDetermine() {
+			 var activeId = "${json.detail.id}";
+			 sessionStorage.setItem("activeId", activeId);
+			 location.href = "event/determine.jsp";
+		 } 
 		  
 		</script>
  
