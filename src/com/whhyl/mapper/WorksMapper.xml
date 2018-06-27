@@ -160,7 +160,7 @@
   
   <!-- 将betMoneyCount查询出来 -->
   <select id="betMoneyCount" resultType="Integer" parameterType="Integer">
-    select sum(bet_money) betMoneyCount 
+    select IFNULL(sum(bet_money),0) betMoneyCount 
     	from
     	tb_betting 
     	where 
