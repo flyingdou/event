@@ -550,8 +550,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			  // vue初始化函数
 			  created: function () {
 				  var obj = active.activeDetail;
-				  obj.link = '<%=basePath%>'active/activeDetail.html?json=' + encodeURI(JSON.stringify({"id":obj.id}));
-				  obj.img = '<%=basePath%>'picture/' + obj.poster;
+				  obj.link = '<%=basePath%>active/activeDetail.html?json=' + encodeURI(JSON.stringify({"id":obj.id}));
+				  obj.img = '<%=basePath%>picture/' + obj.poster;
 				  obj.desc = '活动详情页面分享';
 				  
 				  console.log('link: ' + obj.link + ', img: ' + obj.img + ', desc: ' + obj.desc);
