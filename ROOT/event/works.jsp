@@ -213,6 +213,33 @@ i.icon.icon-prev {
 	<script src="event/js/vue.min.js"></script>
 	<script src="event/js/jquery.min.js"></script>
 	<script type="text/javascript">
+	    //页面载入函数
+		$(function(){
+			// 获取jsapi 分享接口权限
+			$.ajax({
+				url: 'wechat/sign.html',
+				data: {
+					url: location.href.split("#")[0]
+				},
+				success: function (sign) {
+					sign = JSON.parse(sign);
+					wx.config({
+						    debug: true, 
+						    appId: sign.appid,
+						    timestamp: sign.timestamp,
+						    nonceStr: sign.nonceStr,
+						    signature: sign.signature,
+						    jsApiList: [        
+								   "onMenuShareTimeline", //分享给好友
+						           "onMenuShareAppMessage", //分享到朋友圈
+						    ] 
+					});
+				},
+				error: function (e) {
+					console.log('网络异常');
+				}
+			})
+		})
 		var vue = new Vue({
 			el:'#works',
 			data:{
@@ -243,6 +270,48 @@ i.icon.icon-prev {
 						//alert(JSON.stringify(e));
 					}
 				});
+				
+				 var obj = {};
+				  obj.link = '<%=basePath%>works/listWorks.html?json=' + encodeURI(JSON.stringify({"activeId":activeId}));
+				  obj.img = '';
+				  obj.desc = '作品列表';
+				  obj.title = '作品列表'; 
+				  
+				  wx.ready(function () {
+				        wx.onMenuShareTimeline({
+				            title: obj.title,
+				            link: obj.link,
+				            imgUrl: obj.img,
+				            trigger: function (res) {
+				                console.log(JSON.stringify(res));
+				            },
+				            success: function (res) {
+				            	console.log(JSON.stringify(res));
+				            },
+				            cancel: function (res) {
+				            	console.log(JSON.stringify(res));
+				            },
+				            fail: function (res) {
+				            	console.log(JSON.stringify(res));
+				            }
+				        });
+				        wx.onMenuShareAppMessage({
+				            title: obj.name, 
+				            desc: obj.desc, 
+				            link: obj.link, 
+				            imgUrl: obj.img, 
+				            type: 'link', 
+				            success: function () {
+				                console.log(1);
+				            },
+				            cancel: function () {
+				                console.log(2);
+				            }
+				        });
+				        wx.error(function (res) {
+				            alert(res.errMsg);
+				        });
+				    });
 			},
 			methods:{
 				workDetail:function(i){
