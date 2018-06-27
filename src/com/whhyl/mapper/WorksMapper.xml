@@ -158,7 +158,7 @@
   
  
   
-  <!-- 将betMoneyCount查询出来 hhhh-->
+  <!-- 将betMoneyCount查询出来 -->
   <select id="betMoneyCount" resultType="Integer" parameterType="Integer">
     select IFNULL(sum(bet_money),0) betMoneyCount 
     	from
