@@ -212,6 +212,8 @@ i.icon.icon-prev {
 	</div>
 	<script src="event/js/vue.min.js"></script>
 	<script src="event/js/jquery.min.js"></script>
+	<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+	
 	<script type="text/javascript">
 	    //页面载入函数
 		$(function(){
@@ -276,6 +278,7 @@ i.icon.icon-prev {
 				  obj.img = '';
 				  obj.desc = '作品列表';
 				  obj.title = '作品列表'; 
+				  console.log('分享参数：' + JSON.stringify(obj));
 				  
 				  wx.ready(function () {
 				        wx.onMenuShareTimeline({

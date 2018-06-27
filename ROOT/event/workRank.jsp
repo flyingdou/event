@@ -225,7 +225,39 @@ i.icon.icon-prev {
 	</div>
 	<script src="event/js/vue.min.js"></script>
 	<script src="event/js/jquery.min.js"></script>
+	<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 	<script type="text/javascript">
+	 //页面载入函数
+		$(function(){
+			// 获取jsapi 分享接口权限
+			var urlxx = location.href.split("#")[0];
+			urlxx = urlxx.split("?")[0];
+			console.log('urlxx:' + urlxx);
+			$.ajax({
+				url: 'wechat/sign.html',
+				data: {
+					url: urlxx
+				},
+				success: function (sign) {
+					sign = JSON.parse(sign);
+					wx.config({
+						    debug: true, 
+						    appId: sign.appid,
+						    timestamp: sign.timestamp,
+						    nonceStr: sign.nonceStr,
+						    signature: sign.signature,
+						    jsApiList: [        
+								   "onMenuShareTimeline", //分享给好友
+						           "onMenuShareAppMessage", //分享到朋友圈
+						    ] 
+					});
+				},
+				error: function (e) {
+					console.log('网络异常');
+				}
+			}) 
+		})
+	 
 		var vue = new Vue({
 			el: "#work",
 			data: {
@@ -233,7 +265,10 @@ i.icon.icon-prev {
 			},
 			created: function(){
 				var activeId = sessionStorage.getItem("activeId");
-				$.post("works/listWorkRankByActiveId.html",{
+				if (!activeId) {
+					activeId = "${activeId}";
+				}
+			   $.post("works/listWorkRankByActiveId.html",{
 						json: encodeURI(JSON.stringify({activeId:activeId}))
 					},function(res){
 						vue.work = res;
@@ -249,6 +284,49 @@ i.icon.icon-prev {
 							});
 						}, 200);
 				});
+				 
+				  var obj = {};
+				  obj.link = '<%=basePath%>works/getWinWorksList.html?json=' + encodeURI(JSON.stringify({"activeId":activeId}));
+				  obj.img = '';
+				  obj.desc = '获胜作品';
+				  obj.title = '获胜作品'; 
+				  console.log('分享参数：' + JSON.stringify(obj));
+				  
+				  wx.ready(function () {
+				        wx.onMenuShareTimeline({
+				            title: obj.title,
+				            link: obj.link,
+				            imgUrl: obj.img,
+				            trigger: function (res) {
+				                console.log(JSON.stringify(res));
+				            },
+				            success: function (res) {
+				            	console.log(JSON.stringify(res));
+				            },
+				            cancel: function (res) {
+				            	console.log(JSON.stringify(res));
+				            },
+				            fail: function (res) {
+				            	console.log(JSON.stringify(res));
+				            }
+				        });
+				        wx.onMenuShareAppMessage({
+				            title: obj.name, 
+				            desc: obj.desc, 
+				            link: obj.link, 
+				            imgUrl: obj.img, 
+				            type: 'link', 
+				            success: function () {
+				                console.log(1);
+				            },
+				            cancel: function () {
+				                console.log(2);
+				            }
+				        });
+				        wx.error(function (res) {
+				            alert(res.errMsg);
+				        });
+				    });
 			},
 			methods:{
 				workDetail:function(i){
@@ -260,7 +338,13 @@ i.icon.icon-prev {
 					}
 					sessionStorage.setItem("json", encodeURI(JSON.stringify(param)));
 					location.href = "event/workDetail.jsp";
-				}
+				},
+				//获取url中的参数
+		        getUrlParam: function (name) {
+		            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+		            var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+		            if (r != null) return unescape(r[2]); return null; //返回参数值
+		        }
 			}
 		});
 	</script>
