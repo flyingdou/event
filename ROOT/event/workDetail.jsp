@@ -440,7 +440,7 @@
 			</div>
 		</div>
 		<!-- 底部按钮 -->
-		<div class="box-footer" v-if="init_data.activeStatus == 0 || (init_data.activeStatus == 2 && init_data.role == 1)">
+		<div class="box-footer" v-if="init_data.activeStatus == 0 && init_data.role != 1)">
 			<!-- <div class="box-footer-goBack" @click="goBack()">
 				&lt; 返回
 			</div> -->
@@ -602,18 +602,18 @@
 						}else if(res.role == 1){
 							// 裁判进入
 							vue.init_data.param.type = 0;
-							$.post("works/judge.html",
-									{
-										json : encodeURI(JSON.stringify(vue.init_data.param))
-									},
-									function(res){
-										if(res.ranke > 0){
-											vue.footer_buttons = '<div class="box-footer-oneButton">判定名次为 : '+res.ranke+'</div>';
-										}else{
-											vue.footer_buttons = '<div class="box-footer-oneButton" onclick="vue.determine(0)">判定成绩</div>';	
-										}
-									}
-							);
+							// $.post("works/judge.html",
+							// 		{
+							// 			json : encodeURI(JSON.stringify(vue.init_data.param))
+							// 		},
+							// 		function(res){
+							// 			if(res.ranke > 0){
+							// 				vue.footer_buttons = '<div class="box-footer-oneButton">判定名次为 : '+res.ranke+'</div>';
+							// 			}else{
+							// 				vue.footer_buttons = '<div class="box-footer-oneButton" onclick="vue.determine(0)">判定成绩</div>';	
+							// 			}
+							// 		}
+							// );
 						}else if(res.role == 2){
 							// 专家进入
 							vue.footer_buttons = '<div class="box-footer-oneButton" onclick="vue.forecast(0)">预测</div>';

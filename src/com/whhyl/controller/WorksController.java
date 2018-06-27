@@ -245,4 +245,19 @@ public class WorksController {
 			return JSONObject.fromObject(e);
 		}
 	}
+
+	/**
+	 * 查询本活动的胜利作品数量
+	 */
+	@RequestMapping("/getWinnerCount")
+	@ResponseBody
+	public JSONObject getWinnerCount(String json) {
+		try {
+			JSONObject param = JSONObject.fromObject(URLDecoder.decode(json, "UTF-8"));
+			return worksService.getWinnerCount(param);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return JSONObject.fromObject(e);
+		}
+	}
 }

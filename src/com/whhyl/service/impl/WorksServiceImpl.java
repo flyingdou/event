@@ -394,4 +394,10 @@ public class WorksServiceImpl implements WorksService {
 				JsonUtils.ListMapToJsonDateFormat(list, "yyyy-MM-dd"));
 		return result;
 	}
+
+	@Override
+	public JSONObject getWinnerCount(JSONObject param) {
+		Active active = activeMapper.selectByPrimaryKey(param.getLong("activeId"));
+		return new JSONObject().accumulate("winCount", active.getWinCount());
+	}
 }
