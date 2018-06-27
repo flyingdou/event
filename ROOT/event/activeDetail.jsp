@@ -487,6 +487,30 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			  var width = window.screen.width;
 			  $("#xdou-head").css({"width":width});
 			  
+			  // jsapi签名，获得微信分享接口权限
+			  $.ajax({
+				  url: 'wechat/sign.html',
+				  data: {
+					  url: location.href.split("#")[0]
+				  },
+				  success: function (sign) {
+					  sign = JSON.parse(sign);
+						wx.config({
+							    debug: true, 
+							    appId: sign.appid,
+							    timestamp: sign.timestamp,
+							    nonceStr: sign.nonceStr,
+							    signature: sign.signature,
+							    jsApiList: [        
+									   "onMenuShareTimeline", //分享给好友
+							           "onMenuShareAppMessage", //分享到朋友圈
+							    ] 
+						});
+				  },
+				  error: function (e) {
+					  console.log('网络异常');
+				  }
+			  })
 		  
 		  })
 		  
@@ -522,6 +546,51 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 					  return value;
 					  
 				  }
+			  },
+			  // vue初始化函数
+			  created: function () {
+				  var obj = active.activeDetail;
+				  obj.link = '<%=basePath%>'/active/activeDetail.html?json=' + encodeURI(JSON.stringify({"id":obj.id}));
+				  obj.img = '<%=basePath%>'/picture/' + obj.poster;
+				  obj.desc = '活动详情页面分享';
+				  
+				  console.log('link: ' + obj.link + ', img: ' + obj.img + ', desc: ' + obj.desc);
+				  wx.ready(function () {
+				        wx.onMenuShareTimeline({
+				            title: obj.name,
+				            link: obj.link,
+				            imgUrl: obj.img,
+				            trigger: function (res) {
+				                console.log(JSON.stringify(res));
+				            },
+				            success: function (res) {
+				            	console.log(JSON.stringify(res));
+				            },
+				            cancel: function (res) {
+				            	console.log(JSON.stringify(res));
+				            },
+				            fail: function (res) {
+				            	console.log(JSON.stringify(res));
+				            }
+				        });
+				        wx.onMenuShareAppMessage({
+				            title: obj.name, 
+				            desc: obj.desc, 
+				            link: obj.link, 
+				            imgUrl: obj.img, 
+				            type: 'link', 
+				            success: function () {
+				                console.log(1);
+				            },
+				            cancel: function () {
+				                console.log(2);
+				            }
+				        });
+				        wx.error(function (res) {
+				            alert(res.errMsg);
+				        });
+				    });
+				  
 			  }
 		  });
 		  
