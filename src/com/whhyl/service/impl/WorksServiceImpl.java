@@ -22,6 +22,7 @@ import com.whhyl.entity.Betting;
 import com.whhyl.entity.Evaluate;
 import com.whhyl.entity.Vote;
 import com.whhyl.entity.Works;
+import com.whhyl.service.BalanceService;
 import com.whhyl.service.OrderService;
 import com.whhyl.service.WorksService;
 import com.whhyl.util.JsonUtils;
@@ -49,6 +50,8 @@ public class WorksServiceImpl implements WorksService {
 	private ActiveMapper activeMapper;
 	@Autowired
 	private EvaluateMapper evaluateMapper;
+	@Autowired
+	private BalanceService balanceService;
 
 	@Override
 	public JSONObject listWorks(JSONObject param) {
@@ -216,41 +219,17 @@ public class WorksServiceImpl implements WorksService {
 		return result;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public JSONObject judge(JSONObject param) {
 		JSONObject result = new JSONObject();
-		if (param.getInt("type") == 0) {
-			// 检查当前作品是否被判定过名次
-			Map<String, Object> map = new HashMap<String, Object>();
-			map.put("activeId", param.get("activeId"));
-			map.put("workId", param.get("id"));
-			String ranke = worksMapper.getWorksRankeByActiveIdAndWorkId(map);
-			result.accumulate("success", true).accumulate("ranke", ranke == null || "".equals(ranke) ? 0 : ranke);
-		} else if (param.getInt("type") == 1) {
-			// 查询已经被判定过名次的作品
-			Active active = activeMapper.selectByPrimaryKey(param.getLong("activeId"));
-			List<String> list = worksMapper.listWorksRankeByActiveId(param.getString("activeId"));
-			result.accumulate("success", true).accumulate("winCount", active.getWinCount()).accumulate("list", list);
-		} else if (param.getInt("type") == 2) {
-			// 修改当前作品的名次
-			Map<String, Object> map = new HashMap<String, Object>();
-			map.put("ranke", param.getString("ranke"));
-			map.put("activeId", param.getString("activeId"));
-			map.put("workId", param.getString("id"));
-			int resultNum = worksMapper.updateWorkRanke(map);
-			if (resultNum > 0) {
-				Active active = activeMapper.selectByPrimaryKey(param.getLong("activeId"));
-				List<String> list = worksMapper.listWorksRankeByActiveId(param.getString("activeId"));
-				if (list.size() == active.getWinCount()) {
-					result.accumulate("endWork", true);
-				} else {
-					result.accumulate("endWork", false);
-				}
-				result.accumulate("success", true);
-			} else {
-				result.accumulate("success", false);
-			}
+		JSONArray worksList = param.getJSONArray("worksList");
+		for (int i = 0; i < worksList.size(); i++) {
+			JSONObject work = (JSONObject) worksList.get(i);
+			worksMapper.determine(work);
 		}
+		// 排名判定结束调用结算
+		balanceService.balanceByReferee(param);
 		return result;
 	}
 

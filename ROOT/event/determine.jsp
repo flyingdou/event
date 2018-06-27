@@ -221,7 +221,7 @@ i.icon.icon-prev {
 					<div style="margin-top: 10px;font-size: 12px;color:#545556;">暂无数据</div>		
 			</div>
 		<ul class="mui-table-view ul2" style="margin: 0;margin-bottom: 50px;">
-			<li class="mui-table-view-cell mui-media" v-for="(work,index) in works.worksList" @click="workDetail(index)">
+			<li class="mui-table-view-cell mui-media" v-for="(work,index) in works.worksList">
 					<div class="mui-media-object mui-pull-left worksImg">
 						<img class="imgs" :src="'picture/'+ work.image"  width="100%" />
 					</div>
@@ -236,15 +236,15 @@ i.icon.icon-prev {
 						<div style="width:40%;height:80px;float:left;position: relative;">
 							 <div style="font-size: 14px;color:lelele;text-align: right;margin-top: 5px;margin-right: 5px;">判定名次</div>
 							 <div style="position: absolute; top: 50px; right: 0;width: 60px;height: 20px;display: flex;justify-content: space-between;align-items: center;">
-							 	<div>
+							 	<div @click="reduce(index)">
 							 		-
 							 	</div>
 							 	<div style="background-color:#FF7043;width:20px;height:20px;line-height:20px;text-align:center;border-radius:50%;">
 							 		<span style="color:#FFF;font-size: 12px;">
-							 			{{ (index + 1) < 10 ? "0" + (index + 1) : (index + 1)}}
+							 			{{ work.ranke < 10 ? '0' + work.ranke : work.ranke}}
 							 		</span>
 							 	</div>
-							 	<div>
+							 	<div @click="add(index)">
 							 		+
 							 	</div>
 							 </div>
@@ -254,7 +254,7 @@ i.icon.icon-prev {
 		</ul>
 		<div class="footer">
 			<div class="button1">本活动获胜名额{{winCount}}个</div>
-			<div class="button2">确定</div>
+			<div class="button2" @click="submitRanke">确定</div>
 		</div>
 	</div>
 	<script src="event/js/vue.min.js"></script>
@@ -272,6 +272,9 @@ i.icon.icon-prev {
 				$.post("works/listWorks.html",{
 						json: encodeURI(JSON.stringify({activeId:activeId}))
 					},function(res){
+						res.worksList.forEach(function (item, i) {
+							item.ranke = (i + 1);
+						});
 						vue.works = res;
 						// 处理作品图片显示
 						setTimeout(function(){
@@ -297,6 +300,53 @@ i.icon.icon-prev {
 						vue.winCount = res.winCount;
 					}
 				});
+			},
+			methods: {
+				reduce: function (index) {
+					var ranke = this.works.worksList[index].ranke;
+					ranke = (ranke - 1) < 1 ? ranke : ranke - 1;
+					this.works.worksList[index].ranke = ranke;
+				},
+				
+				add: function (index) {
+					this.works.worksList[index].ranke++;
+				},
+				
+				// 检查值是否重复
+				checkValue: function () {
+					var arr = this.works.worksList;
+					for (var i = 0; i < arr.length; i++) {
+						for (var j = (i + 1); j < arr.length; j++) {
+							if (arr[i].ranke == arr[j].ranke) {
+								return false;
+							}
+						}
+					}
+					return true;
+				},
+				
+				// 提交排名
+				submitRanke: function () {
+					if(!this.checkValue()){
+						alert("不能有相同名次的作品!");
+						return;
+					}
+					var param = {
+							activeId: sessionStorage.getItem("activeId"),
+							worksList: this.works.worksList
+					}
+					$.ajax({
+						url: "works/judge.html",
+						type: "post",
+						data: {
+							json: encodeURI(JSON.stringify(param))
+						},
+						dataType: "json",
+						success: function (res) {
+							location.href = "event/workRank.jsp";
+						}
+					});
+				}
 			}
 		});
 	</script>

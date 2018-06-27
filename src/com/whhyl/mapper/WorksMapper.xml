@@ -209,4 +209,9 @@
 			and aw.active_id = #{activeId} order by aw.ranke asc
 		) t
   </select>
+  
+  <!-- 修改排名 -->
+  <update id="determine" parameterType="Map">
+  	 update tb_active_work set ranke = #{ranke} where work_id = #{id}
+  </update>
 </mapper>

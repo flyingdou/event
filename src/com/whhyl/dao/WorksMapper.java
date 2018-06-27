@@ -147,4 +147,11 @@ public interface WorksMapper {
 	 * 查询作品名次列表列表通过活动ID(按名次正序排列)
 	 */
 	List<Map<String, Object>> listWorkRankByActiveId(String activeId);
+	
+	/**
+	 * 修改排名
+	 * @param paramMap
+	 * @return
+	 */
+	int determine(Map<String, Object> paramMap);
 }
