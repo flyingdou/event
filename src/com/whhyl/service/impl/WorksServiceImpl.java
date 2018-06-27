@@ -223,6 +223,11 @@ public class WorksServiceImpl implements WorksService {
 	@Override
 	public JSONObject judge(JSONObject param) {
 		JSONObject result = new JSONObject();
+		// 检查是否为当前活动裁判
+		if (memberMapper.checkActiveReferee(param) < 1) {
+			result.accumulate("success", false).accumulate("message", "需要当前活动的裁判来判定");
+			return result;
+		}
 		JSONArray worksList = param.getJSONArray("worksList");
 		for (int i = 0; i < worksList.size(); i++) {
 			JSONObject work = (JSONObject) worksList.get(i);
@@ -230,6 +235,7 @@ public class WorksServiceImpl implements WorksService {
 		}
 		// 排名判定结束调用结算
 		balanceService.balanceByReferee(param);
+		result.accumulate("success", true);
 		return result;
 	}
 

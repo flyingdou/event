@@ -412,7 +412,7 @@
 			<div class="box-middle-imgBox">
 				<div class="box-middle-imgBoxTitle">作品图片</div>
 				<div class="box-middle-imgBoxBody">
-					<div style="width:1430px;overflow: hidden;">
+					<div style="width:1330px;overflow: hidden;">
 						<div class="box-middle-imgs" v-for="(img,i) in init_data.imgs" @click="showImageDetail(i)">
 							<div style="float:left;width:100%;height:100px;overflow: hidden;">
 								<img class="imgs" :src="'picture/'+ img.image">
@@ -440,10 +440,7 @@
 			</div>
 		</div>
 		<!-- 底部按钮 -->
-		<div class="box-footer" v-if="init_data.activeStatus == 0 && init_data.role != 1)">
-			<!-- <div class="box-footer-goBack" @click="goBack()">
-				&lt; 返回
-			</div> -->
+		<div class="box-footer" v-if="init_data.activeStatus == 0 && init_data.role != 1">
 			<div class="box-footer-buttons" v-html="footer_buttons">
 			</div>
 		</div>
@@ -555,13 +552,12 @@
 			el:"#workDetail",
 			data:{
 				model:{},
-				vote_result: 0,
-				betting_result: 0,
-				determine_result: 0,
-				setUp_result: 0,
-				footer_buttons: 0,
-				processPoint: 0,
-				activeStatus: 0,
+				vote_result:0,
+				betting_result:0,
+				determine_result:0,
+				setUp_result:0,
+				footer_buttons:0,
+				processPoint:0,
 				init_data:{
 					"works":{
 						"image2Remark":"",
@@ -602,18 +598,18 @@
 						}else if(res.role == 1){
 							// 裁判进入
 							vue.init_data.param.type = 0;
-							// $.post("works/judge.html",
-							// 		{
-							// 			json : encodeURI(JSON.stringify(vue.init_data.param))
-							// 		},
-							// 		function(res){
-							// 			if(res.ranke > 0){
-							// 				vue.footer_buttons = '<div class="box-footer-oneButton">判定名次为 : '+res.ranke+'</div>';
-							// 			}else{
-							// 				vue.footer_buttons = '<div class="box-footer-oneButton" onclick="vue.determine(0)">判定成绩</div>';	
-							// 			}
-							// 		}
-							// );
+							$.post("works/judge.html",
+									{
+										json : encodeURI(JSON.stringify(vue.init_data.param))
+									},
+									function(res){
+										if(res.ranke > 0){
+											vue.footer_buttons = '<div class="box-footer-oneButton">判定名次为 : '+res.ranke+'</div>';
+										}else{
+											vue.footer_buttons = '<div class="box-footer-oneButton" onclick="vue.determine(0)">判定成绩</div>';	
+										}
+									}
+							);
 						}else if(res.role == 2){
 							// 专家进入
 							vue.footer_buttons = '<div class="box-footer-oneButton" onclick="vue.forecast(0)">预测</div>';

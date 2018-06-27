@@ -198,16 +198,18 @@
   </select>
   
   <select id="listWorkRankByActiveId" parameterType="String" resultType="Map">
-  	select t.*,(
-			select IFNULL(image,'') from tb_work_image
-			where work_id = t.id limit 1) image
-		from (
-			select w.id,w.name,m.nick author,w.partake_date partakeDate,
-			aw.ranke from tb_works w inner join tb_active_work aw 
-			on w.id = aw.work_id inner join tb_member m on
-			w.author = m.id where aw.ranke is not null
-			and aw.active_id = #{activeId} order by aw.ranke asc
-		) t
+ 	select t.*,
+	(select IFNULL(image,'') from tb_work_image
+		where work_id = t.id limit 1) image,
+	(select IFNULL(sum(id), 0) from tb_vote where contestant = t.id) voteCount,
+	(select IFNULL(sum(bet_money), 0) from tb_betting where contestant = t.id) betCount
+	from (
+		select w.id,w.name,m.nick author,w.partake_date partakeDate,
+		aw.ranke from tb_works w inner join tb_active_work aw 
+		on w.id = aw.work_id inner join tb_member m on
+		w.author = m.id where aw.ranke is not null
+		and aw.active_id = #{activeId} order by aw.ranke asc
+	) t
   </select>
   
   <!-- 修改排名 -->

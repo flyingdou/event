@@ -343,7 +343,11 @@ i.icon.icon-prev {
 						},
 						dataType: "json",
 						success: function (res) {
-							location.href = "event/workRank.jsp";
+							if(res.success){
+								location.href = "event/workRank.jsp";
+							} else {
+								alert(res.message);
+							}
 						}
 					});
 				}

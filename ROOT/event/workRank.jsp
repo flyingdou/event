@@ -209,7 +209,7 @@ i.icon.icon-prev {
 							<div class="bt prodPrice">
 								作者: {{work.author.length > 8 ? work.author.substring(0, 8) : work.author}}
 							</div>
-							<p class="time prodSummary" >日期: {{work.partakeDate}}</p>
+							<p class="time prodSummary" >投票: {{work.voteCount}} &nbsp;&nbsp;投注: {{work.betCount}}</p>
 						</div>
 						<div style="width:40%;height:80px;float:left;position: relative;">
 							 <div style="font-size: 14px;color:lelele;text-align: right;margin-top: 5px;margin-right: 5px;">名次</div>
