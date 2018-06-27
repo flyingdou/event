@@ -241,7 +241,7 @@ public class ActiveServiceImpl implements ActiveService {
 						.accumulate("activeExperts", activeExperts);
 			}
 		} catch (Exception e) {
-			ret.accumulate("success", false).accumulate("msg", e);
+			ret.accumulate("success", false).accumulate("msg", e.toString());
 		}
 		return ret;
 	}

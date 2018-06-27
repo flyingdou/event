@@ -115,7 +115,7 @@ public class ActiveController {
 	@ResponseBody
 	public JSONObject searchActive(String json) {
 		try {
-			JSONObject param = JSONObject.fromObject(URLDecoder.decode(json, "UTF-8"));;
+			JSONObject param = JSONObject.fromObject(URLDecoder.decode(json, "UTF-8"));
 			return activeService.searchActive(param);
 		} catch (Exception e) {
 			e.printStackTrace();
