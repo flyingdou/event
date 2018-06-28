@@ -83,7 +83,7 @@
 						<img :src="'pciture/' + item.image">
 					</div>
 					<div class="member-nick">
-						<div style="font-size: 16px;">item.name</div>
+						<div style="font-size: 16px;">{{item.nick}}</div>
 						<div style="font-size: 12px;color:#AAA;margin-top: 3px;">参加活动{{item.activeCount}}次 , 投票{{item.voteCount}}次</div>
 					</div>
 					<div class="get-funcoin">
