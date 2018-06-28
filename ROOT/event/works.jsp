@@ -223,7 +223,7 @@ i.icon.icon-prev {
 				success: function (sign) {
 					sign = JSON.parse(sign);
 					wx.config({
-						    debug: true, 
+						    debug: false, 
 						    appId: sign.appid,
 						    timestamp: sign.timestamp,
 						    nonceStr: sign.nonceStr,
@@ -294,7 +294,6 @@ i.icon.icon-prev {
 					  obj.img = '<%=basePath%>picture/' + obj.poster;
 					  obj.desc = obj.name + '的作品列表';
 					  obj.title = '作品列表'; 
-					  console.log('分享参数：' + JSON.stringify(obj));
 					  
 					  wx.ready(function () {
 					        wx.onMenuShareTimeline({
