@@ -78,16 +78,16 @@
 					<div style="margin-top: 10px;font-size: 12px;color:#545556;">暂无数据</div>		
 			</div>
 			<ul class="member-list">
-				<li class="member-li" v-for="(member,i) in init_data.memberList" >
+				<li class="member-li" v-for="(item,i) in init_data.memberList" >
 					<div class="member-photo">
 						<img src="http://funcoin.cardcol.com/picture/user.jpg">
 					</div>
 					<div class="member-nick">
-						<div style="font-size: 16px;">用户昵称</div>
-						<div style="font-size: 12px;color:#AAA;margin-top: 3px;">参加活动12次 , 投票8次</div>
+						<div style="font-size: 16px;">item.name</div>
+						<div style="font-size: 12px;color:#AAA;margin-top: 3px;">参加活动{{item.activeCount}}次 , 投票{{item.voteCount}}次</div>
 					</div>
 					<div class="get-funcoin">
-						赢得500FC
+						赢得{{item.funcoin}}FC
 					</div>
 				</li>
 			</ul>
@@ -107,7 +107,6 @@
 						json: encodeURI(JSON.stringify({activeId:activeId}))
 					},function(res){
 						vue.init_data = res;
-						console.log(res);
 				});
 			}
 		});
