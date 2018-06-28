@@ -14,7 +14,6 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-<!-- <link rel="stylesheet" href="event/css/mui.min.css" /> -->
 <script src="event/js/html5media.min.js"></script>
 <style type="text/css">
 	html,body{
@@ -510,7 +509,6 @@
 				 :style="{background: '-webkit-linear-gradient(top, #059CFA, #059CFA) 0% 0% / '+ processPoint*100/100 +'% 100% no-repeat'}">
 			</div>
 			<div class="evaluateBox">
-				<!-- <textarea placeholder="输入评论" class="evaluate" v-model="model.evaluate"></textarea> -->
 				<div class="evaluateButtons">
 					<div class="evaluateButton-ok" @click="forecast(2)">
 						确定
@@ -547,7 +545,38 @@
 	<script src="event/js/vue.min.js"></script>
 	<script src="event/js/jquery.min.js"></script>
 	<script src="event/js/scollBar.js"></script>
+	<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+	
 	<script type="text/javascript">
+		 //页面载入函数
+		$(function(){
+			// 获取jsapi 分享接口权限
+			$.ajax({
+				url: 'wechat/sign.html',
+				data: {
+					url: location.href.split("#")[0]
+				},
+				success: function (sign) {
+					sign = JSON.parse(sign);
+					wx.config({
+						    debug: true, 
+						    appId: sign.appid,
+						    timestamp: sign.timestamp,
+						    nonceStr: sign.nonceStr,
+						    signature: sign.signature,
+						    jsApiList: [        
+								   "onMenuShareTimeline", //分享给好友
+						           "onMenuShareAppMessage", //分享到朋友圈
+						    ] 
+					});
+				},
+				error: function (e) {
+					console.log('网络异常');
+				}
+			})
+		})
+		 
+		 
 		var vue = new Vue({
 			el:"#workDetail",
 			data:{
@@ -579,6 +608,9 @@
 			created:function(){
 				//页面载入,获取初始数据
 				var param = sessionStorage.getItem("json");
+				if (!param) {
+					param = '${param}';
+				}
 				$.ajax({
 					url:"works/worksDetail.html",
 					type:"post",
@@ -991,7 +1023,54 @@
 				changeProcess: function(){
 					var range = document.getElementById('processRange');
 	        this.processPoint = range.value;
+				},
+				
+				// 分享方法
+				share: function () {
+					  var obj = this.init_data;
+					  obj.link = '<%=basePath%>works/getWorksDetail.html?json=' + encodeURI(JSON.stringify(obj.param));
+					  obj.img = '<%=basePath%>picture/' + obj.image1;
+					  obj.desc = obj.name + '详情';
+					  obj.title = '作品详情'; 
+					  console.log('分享参数：' + JSON.stringify(obj));
+					  
+					  wx.ready(function () {
+					        wx.onMenuShareTimeline({
+					            title: obj.title,
+					            link: obj.link,
+					            imgUrl: obj.img,
+					            trigger: function (res) {
+					                console.log(JSON.stringify(res));
+					            },
+					            success: function (res) {
+					            	console.log(JSON.stringify(res));
+					            },
+					            cancel: function (res) {
+					            	console.log(JSON.stringify(res));
+					            },
+					            fail: function (res) {
+					            	console.log(JSON.stringify(res));
+					            }
+					        });
+					        wx.onMenuShareAppMessage({
+					            title: obj.name, 
+					            desc: obj.desc, 
+					            link: obj.link, 
+					            imgUrl: obj.img, 
+					            type: 'link', 
+					            success: function () {
+					                console.log(1);
+					            },
+					            cancel: function () {
+					                console.log(2);
+					            }
+					        });
+					        wx.error(function (res) {
+					            alert(res.errMsg);
+					        });
+					    });
 				}
+				
 			}
 		});
 	</script>

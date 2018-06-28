@@ -293,4 +293,21 @@ public class WorksController {
 		}
 		
 	}
+	
+	
+	/**
+	 * 跳转作品列表页面
+	 */
+	@RequestMapping("/getWorksDetail")
+	public void getWorksDetail(HttpServletRequest request, String json, HttpServletResponse response) {
+		try {
+			JSONObject param = JSONObject.fromObject(URLDecoder.decode(json, "UTF-8"));
+			request.getSession().setAttribute("param", param);
+			response.sendRedirect("../event/workDetail.jsp");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
 }
