@@ -10,6 +10,7 @@ import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 
 import net.coobird.thumbnailator.Thumbnails;
+import net.sf.json.JSONObject;
 
 public class commentsUtil {
 
@@ -171,7 +172,7 @@ public class commentsUtil {
 
 		return strx;
 	}
-	
+
 	/**
 	 * 把String转成Date
 	 * 
@@ -187,7 +188,7 @@ public class commentsUtil {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * 时间相加的方法
 	 * 
@@ -205,17 +206,27 @@ public class commentsUtil {
 		// 将毫秒数转换成日期
 		return new Date(time);
 	}
-	
+
 	/**
 	 * 图片压缩
+	 * 
 	 * @param filePath
 	 */
-	public static void compress(String filePath){
-        try {
-        	//图片尺寸不变，压缩图片文件大小outputQuality实现,参数1为最高质量
-			 Thumbnails.of(filePath).scale(1f).outputQuality(0.25f).toFile(filePath);
+	public static void compress(String filePath) {
+		try {
+			// 图片尺寸不变，压缩图片文件大小outputQuality实现,参数1为最高质量
+			Thumbnails.of(filePath).scale(1f).outputQuality(0.25f).toFile(filePath);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * 模版消息推送
+	 */
+	public JSONObject sendMessage(String AccessToken, JSONObject param) {
+		String sendMessageURL = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=" + AccessToken;
+		JSONObject result = HttpRequestUtils.httpPost(sendMessageURL, param);
+		return result;
 	}
 }
