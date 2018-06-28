@@ -376,6 +376,8 @@ public class WorksServiceImpl implements WorksService {
 	@Override
 	public JSONObject listWorkRankByActiveId(JSONObject param) {
 		JSONObject result = new JSONObject();
+		Active active = activeMapper.selectByPrimaryKey(param.getLong("activeId"));
+		param.accumulate("winCount", active.getWinCount());
 		List<Map<String, Object>> list = worksMapper.listWorkRankByActiveId(param);
 		Map<String, Object> activeInfo = activeMapper.detail(param.getInt("activeId"));
 		result.accumulate("success", true).accumulate("workList",

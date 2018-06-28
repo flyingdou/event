@@ -609,7 +609,7 @@
 				//页面载入,获取初始数据
 				var param = sessionStorage.getItem("json");
 				if (!param) {
-					param = '${param}';
+					param = '${worksDetailParam}';
 				}
 				$.ajax({
 					url:"works/worksDetail.html",
@@ -622,6 +622,7 @@
 						// 根据用户角色渲染对应页面
 						vue.init_data = res;
 						vue.init_data.param = JSON.parse(decodeURI(param));
+						vue.share();
 						//根据用户角色显示对应界面
 						if(res.role == 0){
 							// 观众进入
@@ -680,6 +681,7 @@
 						//alert(JSON.stringify(e));
 					}
 				});
+				
 			},
 			methods:{
 				goBack: function(){
@@ -1029,8 +1031,8 @@
 				share: function () {
 					  var obj = this.init_data;
 					  obj.link = '<%=basePath%>works/getWorksDetail.html?json=' + encodeURI(JSON.stringify(obj.param));
-					  obj.img = '<%=basePath%>picture/' + obj.image1;
-					  obj.desc = obj.name + '详情';
+					  obj.img = '<%=basePath%>picture/' + obj.imgs[0].image;
+					  obj.desc = obj.works.name + '详情';
 					  obj.title = '作品详情'; 
 					  console.log('分享参数：' + JSON.stringify(obj));
 					  
