@@ -241,7 +241,7 @@ i.icon.icon-prev {
 				success: function (sign) {
 					sign = JSON.parse(sign);
 					wx.config({
-						    debug: true, 
+						    debug: false, 
 						    appId: sign.appid,
 						    timestamp: sign.timestamp,
 						    nonceStr: sign.nonceStr,
