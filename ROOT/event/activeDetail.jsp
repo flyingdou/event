@@ -382,7 +382,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 							                           	<div class="h33 font12">
 							                           	        <span>投票：{{activeDetail.voteCount == null ? 0 : activeDetail.voteCount}}人</span> &nbsp;&nbsp; 
 							                           	        <span>投注：{{activeDetail.betCount == null ? 0 : activeDetail.betCount}}人</span>
-							                           	        <span v-if="activeDetail.status == 0">&nbsp;&nbsp;&nbsp;{{activeDetail.totalBet}}FC</span>
+							                           	        <span>&nbsp;&nbsp;&nbsp;{{activeDetail.totalBet == '' ? 0 : activeDetail.totalBet}}FC</span>
 							                           	</div>
 					                           </div>
 								 	    </div>
