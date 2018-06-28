@@ -559,7 +559,7 @@
 				success: function (sign) {
 					sign = JSON.parse(sign);
 					wx.config({
-						    debug: true, 
+						    debug: false, 
 						    appId: sign.appid,
 						    timestamp: sign.timestamp,
 						    nonceStr: sign.nonceStr,
@@ -1034,7 +1034,6 @@
 					  obj.img = '<%=basePath%>picture/' + obj.imgs[0].image;
 					  obj.desc = obj.works.name + '详情';
 					  obj.title = '作品详情'; 
-					  console.log('分享参数：' + JSON.stringify(obj));
 					  
 					  wx.ready(function () {
 					        wx.onMenuShareTimeline({
