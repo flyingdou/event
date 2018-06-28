@@ -290,7 +290,7 @@ i.icon.icon-prev {
 				// 分享方法
 				share: function () {
 					 var obj = this.work.activeInfo;
-					  obj.link = '<%=basePath%>works/listWorks.html?json=' + encodeURI(JSON.stringify({"activeId": obj.id}));
+					  obj.link = '<%=basePath%>works/getWorksList.html?json=' + encodeURI(JSON.stringify({"activeId": obj.id}));
 					  obj.img = '<%=basePath%>picture/' + obj.poster;
 					  obj.desc = obj.name + '的作品列表';
 					  obj.title = '作品列表'; 

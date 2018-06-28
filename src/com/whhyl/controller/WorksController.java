@@ -277,4 +277,20 @@ public class WorksController {
 		}
 		
 	}
+	
+	/**
+	 * 跳转作品列表页面
+	 */
+	@RequestMapping("/getWorksList")
+	public void getWorksList(HttpServletRequest request, String json, HttpServletResponse response) {
+		try {
+			JSONObject param = JSONObject.fromObject(URLDecoder.decode(json, "UTF-8"));
+			String activeId = param.getString("activeId");
+			request.getSession().setAttribute("activeId", activeId);
+			response.sendRedirect("../event/works.jsp");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
 }
