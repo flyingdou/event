@@ -80,14 +80,14 @@
 			<ul class="member-list">
 				<li class="member-li" v-for="(item,i) in init_data.memberList" >
 					<div class="member-photo">
-						<img src="http://funcoin.cardcol.com/picture/user.jpg">
+						<img :src="'pciture/' + image.jpg">
 					</div>
 					<div class="member-nick">
 						<div style="font-size: 16px;">item.name</div>
 						<div style="font-size: 12px;color:#AAA;margin-top: 3px;">参加活动{{item.activeCount}}次 , 投票{{item.voteCount}}次</div>
 					</div>
 					<div class="get-funcoin">
-						赢得{{item.funcoin}}FC
+						赢得{{item.funcion}}FC
 					</div>
 				</li>
 			</ul>
