@@ -3,11 +3,11 @@ package com.whhyl.controller;
 import java.net.URLDecoder;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -266,14 +266,15 @@ public class WorksController {
 	 * 跳转获胜作品列表页面
 	 */
 	@RequestMapping("/getWinWorksList")
-	public String getWinWorksList(HttpServletRequest request, String json, Model model) {
+	public void getWinWorksList(HttpServletRequest request, String json, HttpServletResponse response) {
 		try {
 			JSONObject param = JSONObject.fromObject(URLDecoder.decode(json, "UTF-8"));
 			String activeId = param.getString("activeId");
-			model.addAttribute("activeId", activeId);
+			request.getSession().setAttribute("activeId", activeId);
+			response.sendRedirect("../event/workRank.jsp");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return "workRank";
+		
 	}
 }

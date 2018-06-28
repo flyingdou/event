@@ -62,9 +62,10 @@ public class WorksServiceImpl implements WorksService {
 			Active active = activeMapper.selectByPrimaryKey(param.getLong("activeId"));
 			// 根据活动Id查询作品列表
 			List<Map<String, Object>> worksList = worksMapper.listWroksByActiveId(param.getString("activeId"));
+			Map<String, Object> activeInfo = activeMapper.detail(param.getInt("activeId"));
 			result.accumulate("success", true)
 					.accumulate("worksList", JsonUtils.ListMapToJsonDateFormat(worksList, "yyyy-MM-dd"))
-					.accumulate("status", active.getStatus());
+					.accumulate("status", active.getStatus()).accumulate("activeInfo", activeInfo);
 		} else {
 			result.accumulate("success", false);
 		}
@@ -375,8 +376,9 @@ public class WorksServiceImpl implements WorksService {
 	public JSONObject listWorkRankByActiveId(JSONObject param) {
 		JSONObject result = new JSONObject();
 		List<Map<String, Object>> list = worksMapper.listWorkRankByActiveId(param.getString("activeId"));
+		Map<String, Object> activeInfo = activeMapper.detail(param.getInt("activeId"));
 		result.accumulate("success", true).accumulate("workList",
-				JsonUtils.ListMapToJsonDateFormat(list, "yyyy-MM-dd"));
+				JsonUtils.ListMapToJsonDateFormat(list, "yyyy-MM-dd")).accumulate("activeInfo", activeInfo);
 		return result;
 	}
 

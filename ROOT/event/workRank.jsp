@@ -283,14 +283,30 @@ i.icon.icon-prev {
 								}
 							});
 						}, 200);
+						vue.share();
 				});
 				 
-				  var obj = {};
-				  obj.link = '<%=basePath%>works/getWinWorksList.html?json=' + encodeURI(JSON.stringify({"activeId":activeId}));
-				  obj.img = '';
-				  obj.desc = '获胜作品';
+				  
+			},
+			methods:{
+				workDetail:function(i){
+					// 去作品详情
+					var workId = vue.work.workList[i].id;
+					var param = {
+							id : workId,
+							activeId : sessionStorage.getItem("activeId")
+					}
+					sessionStorage.setItem("json", encodeURI(JSON.stringify(param)));
+					location.href = "event/workDetail.jsp";
+				},
+				
+				// 分享方法
+				share: function () {
+				  var obj = this.work.activeInfo;
+				  obj.link = '<%=basePath%>works/getWinWorksList.html?json=' + encodeURI(JSON.stringify({"activeId": obj.id}));
+				  obj.img = '<%=basePath%>picture/' + obj.poster;
+				  obj.desc = obj.name + '的获胜作品';
 				  obj.title = '获胜作品'; 
-				  console.log('分享参数：' + JSON.stringify(obj));
 				  
 				  wx.ready(function () {
 				        wx.onMenuShareTimeline({
@@ -327,24 +343,7 @@ i.icon.icon-prev {
 				            alert(res.errMsg);
 				        });
 				    });
-			},
-			methods:{
-				workDetail:function(i){
-					// 去作品详情
-					var workId = vue.work.workList[i].id;
-					var param = {
-							id : workId,
-							activeId : sessionStorage.getItem("activeId")
-					}
-					sessionStorage.setItem("json", encodeURI(JSON.stringify(param)));
-					location.href = "event/workDetail.jsp";
-				},
-				//获取url中的参数
-		        getUrlParam: function (name) {
-		            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
-		            var r = window.location.search.substr(1).match(reg);  //匹配目标参数
-		            if (r != null) return unescape(r[2]); return null; //返回参数值
-		        }
+				}
 			}
 		});
 	</script>

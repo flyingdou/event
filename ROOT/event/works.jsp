@@ -206,9 +206,6 @@ i.icon.icon-prev {
 				</a>
 			</li>
 		</ul>
-		<!-- <div class="footer">
-			<a href="javascript:history.go(-1)">&lt;&nbsp;返回活动详情</a>
-		</div> -->
 	</div>
 	<script src="event/js/vue.min.js"></script>
 	<script src="event/js/jquery.min.js"></script>
@@ -249,6 +246,9 @@ i.icon.icon-prev {
 			},
 			created:function(){
 				var activeId = sessionStorage.getItem("activeId");
+				if (!activeId) {
+					activeId = '${activeId}';
+				}
 				$.ajax({
 					url:'works/listWorks.html',
 					type:'post',
@@ -267,54 +267,14 @@ i.icon.icon-prev {
 								}
 							});
 						}, 200);
+						vue.share();
 					},
 					error:function(e){
 						//alert(JSON.stringify(e));
 					}
 				});
 				
-				 var obj = {};
-				  obj.link = '<%=basePath%>works/listWorks.html?json=' + encodeURI(JSON.stringify({"activeId":activeId}));
-				  obj.img = '';
-				  obj.desc = '作品列表';
-				  obj.title = '作品列表'; 
-				  console.log('分享参数：' + JSON.stringify(obj));
-				  
-				  wx.ready(function () {
-				        wx.onMenuShareTimeline({
-				            title: obj.title,
-				            link: obj.link,
-				            imgUrl: obj.img,
-				            trigger: function (res) {
-				                console.log(JSON.stringify(res));
-				            },
-				            success: function (res) {
-				            	console.log(JSON.stringify(res));
-				            },
-				            cancel: function (res) {
-				            	console.log(JSON.stringify(res));
-				            },
-				            fail: function (res) {
-				            	console.log(JSON.stringify(res));
-				            }
-				        });
-				        wx.onMenuShareAppMessage({
-				            title: obj.name, 
-				            desc: obj.desc, 
-				            link: obj.link, 
-				            imgUrl: obj.img, 
-				            type: 'link', 
-				            success: function () {
-				                console.log(1);
-				            },
-				            cancel: function () {
-				                console.log(2);
-				            }
-				        });
-				        wx.error(function (res) {
-				            alert(res.errMsg);
-				        });
-				    });
+				 
 			},
 			methods:{
 				workDetail:function(i){
@@ -326,6 +286,51 @@ i.icon.icon-prev {
 					}
 					sessionStorage.setItem("json", encodeURI(JSON.stringify(param)));
 					location.href = "event/workDetail.jsp";
+				},
+				// 分享方法
+				share: function () {
+					 var obj = this.work.activeInfo;
+					  obj.link = '<%=basePath%>works/listWorks.html?json=' + encodeURI(JSON.stringify({"activeId": obj.id}));
+					  obj.img = '<%=basePath%>picture/' + obj.poster;
+					  obj.desc = obj.name + '的作品列表';
+					  obj.title = '作品列表'; 
+					  console.log('分享参数：' + JSON.stringify(obj));
+					  
+					  wx.ready(function () {
+					        wx.onMenuShareTimeline({
+					            title: obj.title,
+					            link: obj.link,
+					            imgUrl: obj.img,
+					            trigger: function (res) {
+					                console.log(JSON.stringify(res));
+					            },
+					            success: function (res) {
+					            	console.log(JSON.stringify(res));
+					            },
+					            cancel: function (res) {
+					            	console.log(JSON.stringify(res));
+					            },
+					            fail: function (res) {
+					            	console.log(JSON.stringify(res));
+					            }
+					        });
+					        wx.onMenuShareAppMessage({
+					            title: obj.name, 
+					            desc: obj.desc, 
+					            link: obj.link, 
+					            imgUrl: obj.img, 
+					            type: 'link', 
+					            success: function () {
+					                console.log(1);
+					            },
+					            cancel: function () {
+					                console.log(2);
+					            }
+					        });
+					        wx.error(function (res) {
+					            alert(res.errMsg);
+					        });
+					    });
 				}
 			}
 		});
