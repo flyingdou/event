@@ -175,26 +175,25 @@
   </insert>
   
   <select id="listWinnerByActiveId" parameterType="String" resultType="Map">
-	  select t.*, (select count(t.id) from (
+	  select b.*, (select count(t.id) from (
 			SELECT DISTINCT a.id,a.member FROM (
 				SELECT a.id,v.member FROM tb_active a,tb_vote v
-				WHERE a.id = v.active_id AND v.member = t.id
+				WHERE a.id = v.active_id 
 				UNION ALL
 				SELECT a.id,b.member FROM tb_active a,tb_betting b
-				WHERE a.id = b.active_id AND b.member = t.id
+				WHERE a.id = b.active_id 
 				UNION ALL
 				SELECT id,referee FROM tb_active
-				WHERE referee = t.id
 				UNION ALL
 				SELECT a.id,e.member FROM tb_active a,tb_expert_forecast e
-				WHERE a.id = e.active_id AND e.member = t.id
+				WHERE a.id = e.active_id 
 			) a
 		) t where t.member = b.id) activeCount, 
 		(select count(id) from tb_vote where member = b.id) voteCount from (
 		select m.id,m.nick,m.image,sum(funcoin) funcoin
 		from tb_order o inner join tb_member m on o.toMember = m.id 
 		where o.status = 3 and o.product_type = 'E'
-		and product = #{activeId} group by m.id) t
+		and product = #{activeId} group by m.id) b
   </select>
   
   <select id="listWorkRankByActiveId" parameterType="Map" resultType="Map">

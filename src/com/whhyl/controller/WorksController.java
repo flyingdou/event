@@ -230,7 +230,6 @@ public class WorksController {
 			e.printStackTrace();
 			return JSONObject.fromObject(e);
 		}
-		
 	}
 
 	/**
