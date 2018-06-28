@@ -197,7 +197,7 @@
 		and product = #{activeId} group by m.id) b
   </select>
   
-  <select id="listWorkRankByActiveId" parameterType="String" resultType="Map">
+  <select id="listWorkRankByActiveId" parameterType="Map" resultType="Map">
  	select t.*,
 	(select IFNULL(image,'') from tb_work_image
 		where work_id = t.id limit 1) image,
@@ -209,6 +209,7 @@
 		on w.id = aw.work_id inner join tb_member m on
 		w.author = m.id where aw.ranke is not null
 		and aw.active_id = #{activeId} order by aw.ranke asc
+		limit #{winCount}
 	) t
   </select>
   

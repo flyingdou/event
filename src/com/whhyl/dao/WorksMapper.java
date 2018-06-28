@@ -146,7 +146,7 @@ public interface WorksMapper {
 	/**
 	 * 查询作品名次列表列表通过活动ID(按名次正序排列)
 	 */
-	List<Map<String, Object>> listWorkRankByActiveId(String activeId);
+	List<Map<String, Object>> listWorkRankByActiveId(Map<String, Object> paramMap);
 	
 	/**
 	 * 修改排名

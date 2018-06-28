@@ -372,10 +372,11 @@ public class WorksServiceImpl implements WorksService {
 		return result;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public JSONObject listWorkRankByActiveId(JSONObject param) {
 		JSONObject result = new JSONObject();
-		List<Map<String, Object>> list = worksMapper.listWorkRankByActiveId(param.getString("activeId"));
+		List<Map<String, Object>> list = worksMapper.listWorkRankByActiveId(param);
 		Map<String, Object> activeInfo = activeMapper.detail(param.getInt("activeId"));
 		result.accumulate("success", true).accumulate("workList",
 				JsonUtils.ListMapToJsonDateFormat(list, "yyyy-MM-dd")).accumulate("activeInfo", activeInfo);
