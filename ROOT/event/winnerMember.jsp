@@ -87,7 +87,7 @@
 						<div style="font-size: 12px;color:#AAA;margin-top: 3px;">参加活动{{item.activeCount}}次 , 投票{{item.voteCount}}次</div>
 					</div>
 					<div class="get-funcoin">
-						赢得{{item.funcion}}FC
+						赢得{{item.funcoin}}FC
 					</div>
 				</li>
 			</ul>
