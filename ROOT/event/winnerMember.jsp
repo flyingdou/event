@@ -80,7 +80,7 @@
 			<ul class="member-list">
 				<li class="member-li" v-for="(item,i) in init_data.memberList" >
 					<div class="member-photo">
-						<img :src="'pciture/' + image.jpg">
+						<img :src="'pciture/' + item.image">
 					</div>
 					<div class="member-nick">
 						<div style="font-size: 16px;">item.name</div>
