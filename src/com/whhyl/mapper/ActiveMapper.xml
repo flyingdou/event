@@ -230,7 +230,15 @@
   </select>
   
   
-  
+  <!-- 查询当前活动的专家信息 -->
+  <select id="getExpertByActive" parameterType="Long" resultType="Map">
+            select 
+			       m.wechat_id  
+			from 
+			       tb_expert_forecast ef LEFT JOIN tb_member m ON ef.member = m.id  
+			where  
+			       ef.active_id = #{active_id} 
+  </select>
   
   
   

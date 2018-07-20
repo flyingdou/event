@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.whhyl.common.Constants;
 import com.whhyl.dao.ActiveMapper;
 import com.whhyl.dao.MemberMapper;
 import com.whhyl.entity.Active;
@@ -19,6 +20,8 @@ import com.whhyl.service.ExpertService;
 import com.whhyl.util.JsonUtils;
 import com.whhyl.util.StringUtils;
 import com.whhyl.util.commentsUtil;
+import com.whhyl.wechatApi.SendTemplateRequest;
+import com.whhyl.wechatApi.WechatManager;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -134,6 +137,30 @@ public class ActiveServiceImpl implements ActiveService {
 				for (Object expertId : expertIds) {
 					expertService.expertAddByLaunch(active.getId(), Integer.valueOf(expertId.toString()));
 				}
+				
+				//  查询当前活动的专家信息
+				List<Map<String, Object>> expertList = activeDao.getExpertByActive(active.getId());
+				
+				// 给专家发送微信模板通知
+				WechatManager wechatManager = new WechatManager(Constants.APP_ID, Constants.APP_SECRET);
+				String template_id = Constants.ACTIVE_AUDIT_RESULT;
+				String url = "http://funcoin.cardcol.com/active/activeDetail.html";
+				
+				// 循环发送微信模板通知
+				for (Map<String, Object> map : expertList) {
+					String openid = String.valueOf(map.get("wechat_id"));
+					JSONObject dataJson = new JSONObject();
+					dataJson.accumulate("first", new JSONObject().accumulate("value", "你已被选择为 '"+ active.getName() +"'的专家，请关注该活动。"))
+					        .accumulate("keyword1", new JSONObject().accumulate("value", active.getName()))
+					        .accumulate("keyword2", new JSONObject().accumulate("value", "审核通过"))
+					        .accumulate("remark", new JSONObject().accumulate("value", "祝你生活愉快！"))
+					        ;
+					SendTemplateRequest sendTemplateRequest = new SendTemplateRequest(openid, template_id, url, dataJson);
+					wechatManager.sendTemplateMessage(sendTemplateRequest);
+				}
+				
+				
+				
 				
 			}
 

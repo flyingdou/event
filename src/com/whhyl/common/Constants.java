@@ -9,6 +9,17 @@ package com.whhyl.common;
 public class Constants {
 	
 	/**
+	 * app_id
+	 */
+	public final static String APP_ID = "wxbc83d7dbb3a30e14";
+	
+	/**
+	 * app_secret
+	 */
+	public final static String APP_SECRET = "049c7653e2b44a72bbbee5c8e065b8be";
+	
+	
+	/**
 	 * 成功
 	 */
 	public final static String SUCCESS = "SUCCESS";
