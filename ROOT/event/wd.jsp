@@ -200,6 +200,16 @@
 			.act1{
 				margin-right: 14px;
 			}
+			
+			.copyright{
+				position: fixed;
+				bottom: 0;
+				left: 0;
+				width: 100%;
+				text-align: center;
+				font-size: 12px;
+				color: #BBB;
+			}
 		</style>
 	</head>
 	<body>
@@ -271,6 +281,10 @@
 					</a>
 				</li>
 			</ul> -->
+		</div>
+		<div class="copyright">
+			<div>武汉好韵莱信息技术有限公司  版本所有</div>
+			<div>鄂ICP备08004430号-3  版本号：2.12</div>
 		</div>
 		<script src="event/js/mui.min.js"></script>
 		<script type="text/javascript">
