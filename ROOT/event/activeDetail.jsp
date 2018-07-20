@@ -573,7 +573,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 				            }
 				        });
 				        wx.onMenuShareAppMessage({
-				            title: obj.name, 
+				            title: "获胜名额${json.detail.win_count}，投票可获得${json.detail.vote_parise}FC，投票截止时间：${json.detail.vote_deadline}",
 				            desc: obj.desc, 
 				            link: obj.link, 
 				            imgUrl: obj.img, 
