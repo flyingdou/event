@@ -74,26 +74,34 @@
   
   <!-- 查询用户收入订单信息 -->
   <select id="incomeOrder" resultType="Map"  parameterType="Integer">
-   select * from (
-    select o.remark  as name, '受赠' AS prodName, m.nick fromMemberNick, o.*
-		from tb_order o, tb_member m
-		where o.product_type = 'C' 
-		and o.member = m.id
-		and o.toMember = #{member}
-		UNION ALL 
-		select '投注获利' AS name, '结算' AS prodName, m.nick fromMemberNick, o.* 
-		from tb_order o, tb_member m 
-		where o.product_type = 'E' 
-		and o.member = m.id 
-		and o.toMember = #{member} 
-		UNION ALL 
-		select '' AS name, '充值' AS prodName, m.nick fromMemberNick, o.* 
-		from tb_order o,tb_member m
-		where o.product_type = 'A'
-		and o.status = '1' 
-		and o.member = m.id 
-		and o.toMember = #{member}
-	 ) t order by t.auto_time desc
+	 select * from (
+	    select o.remark  as name, '受赠' AS prodName, m.nick fromMemberNick, o.*
+			from tb_order o, tb_member m
+			where o.product_type = 'C' 
+			and o.member = m.id
+			and o.toMember = #{member}
+			UNION ALL 
+			select IFNULL(CONCAT(a.name, "活动投注获利"), "投注获利") AS name, "结算" AS prodName, m.nick fromMemberNick, o.* 
+			from tb_order o inner join tb_member m on o.member = m.id left join tb_active a 
+			on o.product = a.id
+			where o.product_type = 'E' 
+			and o.toMember != a.creator
+			and o.toMember = #{member}
+			UNION ALL 
+			select IFNULL(CONCAT(a.name, "活动庄家结算"), "投注获利") AS name, "结算" AS prodName, m.nick fromMemberNick, o.* 
+			from tb_order o inner join tb_member m on o.member = m.id left join tb_active a 
+			on o.product = a.id
+			where o.product_type = 'E' 
+			and o.toMember = a.creator
+			and o.toMember = #{member}
+			UNION ALL 
+			select '' AS name, '充值' AS prodName, m.nick fromMemberNick, o.* 
+			from tb_order o,tb_member m
+			where o.product_type = 'A'
+			and o.status = '1' 
+			and o.member = m.id 
+			and o.toMember = #{member}
+		 ) t order by t.auto_time desc
   </select>
   
   <!-- 查询用户支出订单信息 -->
