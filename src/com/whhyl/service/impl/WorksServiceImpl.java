@@ -20,6 +20,7 @@ import com.whhyl.dao.WorksMapper;
 import com.whhyl.entity.Active;
 import com.whhyl.entity.Betting;
 import com.whhyl.entity.Evaluate;
+import com.whhyl.entity.Member;
 import com.whhyl.entity.Vote;
 import com.whhyl.entity.Works;
 import com.whhyl.service.BalanceService;
@@ -28,6 +29,8 @@ import com.whhyl.service.WorksService;
 import com.whhyl.util.JsonUtils;
 import com.whhyl.util.StringUtils;
 import com.whhyl.util.commentsUtil;
+import com.whhyl.wechatApi.SendTemplateRequest;
+import com.whhyl.wechatApi.WechatManager;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -65,7 +68,8 @@ public class WorksServiceImpl implements WorksService {
 			Map<String, Object> activeInfo = activeMapper.detail(param.getInt("activeId"));
 			result.accumulate("success", true)
 					.accumulate("worksList", JsonUtils.ListMapToJsonDateFormat(worksList, "yyyy-MM-dd"))
-					.accumulate("status", active.getStatus()).accumulate("activeInfo", JsonUtils.MapToJsonDateFormat(activeInfo, "yyyy-MM-dd"));
+					.accumulate("status", active.getStatus())
+					.accumulate("activeInfo", JsonUtils.MapToJsonDateFormat(activeInfo, "yyyy-MM-dd"));
 		} else {
 			result.accumulate("success", false);
 		}
@@ -110,6 +114,7 @@ public class WorksServiceImpl implements WorksService {
 	public JSONObject releaseWorks(JSONObject param) {
 		JSONObject result = new JSONObject();
 		Works works = new Works();
+		Member member = memberMapper.selectByPrimaryKey(param.getLong("author"));
 		works.setAuthor(param.getInt("author"));
 		works.setPartakeDate(new Date());
 		// 空值检查
@@ -140,6 +145,27 @@ public class WorksServiceImpl implements WorksService {
 		// 添加活动关联作品
 		map.put("activeId", param.getString("activeId"));
 		worksMapper.insertActiveWork(map);
+
+		// 发送模版消息
+		JSONObject urlParam = new JSONObject();
+		urlParam.accumulate("id", works.getId());
+		String url = "http://funcoin.cardcol.com/workDetail.jsp?param=" + urlParam.toString();
+		JSONObject dataJson = new JSONObject();
+		dataJson.accumulate("first", new JSONObject().accumulate("value", "作品发布成功!"))
+				.accumulate("keyword1", new JSONObject().accumulate("value", "方孔活动"))
+				.accumulate("keyword2", new JSONObject().accumulate("value", works.getName()))
+				.accumulate("keyword3",
+						new JSONObject().accumulate("value",
+								commentsUtil.dateFormat(works.getPartakeDate(), "yyyy-MM-dd")))
+				.accumulate("keyword4", new JSONObject().accumulate("value", works.getRemark()))
+				.accumulate("remark", new JSONObject().accumulate("value", "欢迎参加活动!"));
+		String templateId = Constants.WORK_RELEASE_COMPLETE;
+		SendTemplateRequest sendTemplateRequest = new SendTemplateRequest(member.getWechatId(), templateId, url,
+				dataJson);
+		WechatManager wechatManager = new WechatManager(Constants.APP_ID, Constants.APP_SECRET);
+		wechatManager.sendTemplateMessage(sendTemplateRequest);
+
+		// 返回结果
 		result.accumulate("success", true).accumulate("msg", "发布成功").accumulate("id", works.getId());
 		return result;
 	}
@@ -380,8 +406,8 @@ public class WorksServiceImpl implements WorksService {
 		param.accumulate("winCount", active.getWinCount());
 		List<Map<String, Object>> list = worksMapper.listWorkRankByActiveId(param);
 		Map<String, Object> activeInfo = activeMapper.detail(param.getInt("activeId"));
-		result.accumulate("success", true).accumulate("workList",
-				JsonUtils.ListMapToJsonDateFormat(list, "yyyy-MM-dd")).accumulate("activeInfo", JsonUtils.MapToJsonDateFormat(activeInfo, "yyyy-MM-dd"));
+		result.accumulate("success", true).accumulate("workList", JsonUtils.ListMapToJsonDateFormat(list, "yyyy-MM-dd"))
+				.accumulate("activeInfo", JsonUtils.MapToJsonDateFormat(activeInfo, "yyyy-MM-dd"));
 		return result;
 	}
 

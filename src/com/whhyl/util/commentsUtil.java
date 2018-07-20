@@ -19,6 +19,18 @@ public class commentsUtil {
 	public static String getRandomString() {
 		return "" + Math.round(Math.random() * 1000000);
 	}
+	
+	/**
+	 * 日期格式化
+	 * 
+	 * @param date
+	 * @param format
+	 * @return
+	 */
+	public static String dateFormat(Date date, String format) {
+		SimpleDateFormat sdf = new SimpleDateFormat(format);
+		return sdf.format(date);
+	}
 
 	/**
 	 * 获得指定位数的随机数
