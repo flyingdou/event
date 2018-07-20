@@ -56,6 +56,9 @@ public class WorksServiceImpl implements WorksService {
 	@Autowired
 	private BalanceService balanceService;
 
+	/**
+	 * 查询作品列表
+	 */
 	@Override
 	public JSONObject listWorks(JSONObject param) {
 		JSONObject result = new JSONObject();
@@ -76,6 +79,9 @@ public class WorksServiceImpl implements WorksService {
 		return result;
 	}
 
+	/**
+	 * 查询作品详情
+	 */
 	@Override
 	public JSONObject worksDetail(JSONObject param) {
 		JSONObject result = new JSONObject();
@@ -108,7 +114,10 @@ public class WorksServiceImpl implements WorksService {
 		}
 		return result;
 	}
-
+	
+	/**
+	 * 发布作品
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public JSONObject releaseWorks(JSONObject param) {
@@ -147,9 +156,8 @@ public class WorksServiceImpl implements WorksService {
 		worksMapper.insertActiveWork(map);
 
 		// 发送模版消息
-		JSONObject urlParam = new JSONObject();
-		urlParam.accumulate("id", works.getId());
 		String url = "";
+		// 模版消息内容
 		JSONObject dataJson = new JSONObject();
 		dataJson.accumulate("first", new JSONObject().accumulate("value", "作品发布成功!"))
 				.accumulate("keyword1", new JSONObject().accumulate("value", "方孔活动"))
@@ -159,6 +167,7 @@ public class WorksServiceImpl implements WorksService {
 								commentsUtil.dateFormat(works.getPartakeDate(), "yyyy-MM-dd")))
 				.accumulate("keyword4", new JSONObject().accumulate("value", works.getRemark()))
 				.accumulate("remark", new JSONObject().accumulate("value", "欢迎参加活动!"));
+		// 模版Id
 		String templateId = Constants.WORK_RELEASE_COMPLETE;
 		SendTemplateRequest sendTemplateRequest = new SendTemplateRequest(member.getWechatId(), templateId, url,
 				dataJson);
@@ -170,6 +179,9 @@ public class WorksServiceImpl implements WorksService {
 		return result;
 	}
 
+	/**
+	 * 修改作品图片描述
+	 */
 	@Override
 	public JSONObject updateWorkImageRemark(JSONObject param) {
 		Map<String, Object> map = new HashMap<String, Object>();
@@ -181,6 +193,9 @@ public class WorksServiceImpl implements WorksService {
 		return result;
 	}
 
+	/**
+	 * 设置赔率
+	 */
 	@Override
 	public JSONObject setTheOdds(JSONObject param) {
 		JSONObject result = new JSONObject();
@@ -216,6 +231,9 @@ public class WorksServiceImpl implements WorksService {
 		return result;
 	}
 
+	/**
+	 * 设置作品胜率
+	 */
 	@Override
 	public JSONObject forecast(JSONObject param) {
 		JSONObject result = new JSONObject();
@@ -246,6 +264,9 @@ public class WorksServiceImpl implements WorksService {
 		return result;
 	}
 
+	/**
+	 * 判定成绩
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public JSONObject judge(JSONObject param) {
@@ -266,6 +287,9 @@ public class WorksServiceImpl implements WorksService {
 		return result;
 	}
 
+	/**
+	 * 投票/投注
+	 */
 	@Override
 	public JSONObject voteOrBetting(JSONObject param) {
 		JSONObject result = new JSONObject();
@@ -368,6 +392,9 @@ public class WorksServiceImpl implements WorksService {
 		return result;
 	}
 
+	/**
+	 * 在我的作品列表中发布作品
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public JSONObject releaseWorksFromMyWorks(JSONObject param) {
@@ -390,6 +417,9 @@ public class WorksServiceImpl implements WorksService {
 		return result;
 	}
 
+	/**
+	 * 根据活动Id查询投注获胜用户
+	 */
 	@Override
 	public JSONObject listWinnerByActiveId(JSONObject param) {
 		JSONObject result = new JSONObject();
