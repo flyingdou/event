@@ -33,4 +33,9 @@ public interface ActiveService {
 	 * 搜索活动
 	 */
 	JSONObject searchActive(JSONObject param);
+	
+	/**
+	 * 发送模板消息
+	 */
+    JSONObject sendTemplate (String active_id);
 }

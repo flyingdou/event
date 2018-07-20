@@ -53,6 +53,23 @@ public class ActiveController {
 		return ret;
 	}
 
+	
+	@RequestMapping("/sendTemplate")
+	@ResponseBody
+	public JSONObject sendTemplate (String activeId) {
+		JSONObject ret = new JSONObject();
+		try {
+			ret = activeService.sendTemplate(activeId);
+		} catch (Exception e) {
+			ret.accumulate("success", false)
+			   .accumulate("message", e.toString())
+			   ;
+			e.printStackTrace();
+		}
+		return ret;
+	}
+	
+	
 	/**
 	 * 活动列表
 	 * 

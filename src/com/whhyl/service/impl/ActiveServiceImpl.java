@@ -170,6 +170,11 @@ public class ActiveServiceImpl implements ActiveService {
 		return ret;
 
 	}
+	
+	
+	
+	
+	
 
 	/**
 	 * 活动列表
@@ -284,6 +289,32 @@ public class ActiveServiceImpl implements ActiveService {
 		}
 		result.accumulate("success", true).accumulate("activeList", activeDao.searchActive(map));
 		return result;
+	}
+
+
+
+
+
+
+	/**
+	 * 发送模板消息
+	 */
+	@Override
+	public JSONObject sendTemplate(String active_id) {
+		JSONObject ret = new JSONObject();
+		String template_id = Constants.ACTIVE_AUDIT_RESULT;
+		String url = "http://funcoin.cardcol.com/active/activeDetail.html";
+		WechatManager wechatManager = new WechatManager(Constants.APP_ID, Constants.APP_SECRET);
+			String openid = "oHPqD1K6zgsCfpq6V088qfvfQkmg";
+			JSONObject dataJson = new JSONObject();
+			dataJson.accumulate("first", new JSONObject().accumulate("value", "你已被选择为 '哪个葡萄大'的专家，请关注该活动。"))
+			        .accumulate("keyword1", new JSONObject().accumulate("value", "哪个葡萄大"))
+			        .accumulate("keyword2", new JSONObject().accumulate("value", "审核通过"))
+			        .accumulate("remark", new JSONObject().accumulate("value", "祝你生活愉快！"))
+			        ;
+			SendTemplateRequest sendTemplateRequest = new SendTemplateRequest(openid, template_id, url, dataJson);
+			ret = wechatManager.sendTemplateMessage(sendTemplateRequest);
+		return ret;
 	}
 
 }
