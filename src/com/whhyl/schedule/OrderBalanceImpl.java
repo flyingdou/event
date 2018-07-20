@@ -19,7 +19,6 @@ import com.whhyl.dao.BettingMapper;
 import com.whhyl.dao.OrderMapper;
 import com.whhyl.dao.WorksMapper;
 import com.whhyl.entity.Active;
-import com.whhyl.entity.Betting;
 import com.whhyl.entity.Order;
 import com.whhyl.util.commentsUtil;
 /**
@@ -66,8 +65,7 @@ public class OrderBalanceImpl  implements OrderBalance {
 				if (decisionDataList != null){
 					// 有数据，排名次
 					for (int i = 0; i < decisionDataList.size() ; i++) {
-						// 设胜，设排名
-						decisionDataList.get(i).put("value", 1);
+						// 设排名
 						decisionDataList.get(i).put("ranke", i+1);
 						
 						// 持久化数据
@@ -118,11 +116,15 @@ public class OrderBalanceImpl  implements OrderBalance {
 	    Order order = new Order();
 	    Map<String, Object> param = new HashMap<String, Object> ();
 	    param.put("active_id", active.getId());
+	    param.put("win_count", active.getWinCount());
+	    
+	    //查询当前获胜用户投注的数据
+	    List<Map<String, Object>> betList = betDao.winMemberBetting(param);
+	    
 	    // 按注分润
 		if ("0".equals(active.getBalanceType())){
 		    Integer betMoneyCount = worksDao.betMoneyCount(active.getId().intValue());
-		    //查询当前获胜用户投注的数据
-		    List<Betting> betList = betDao.winMemberBetting(param);
+		    
 		    //庄家获利
 	    	Double T = betMoneyCount.doubleValue() *0.2;
 	    	order = new Order();
@@ -131,22 +133,23 @@ public class OrderBalanceImpl  implements OrderBalance {
 			order.setMember(10);
 			order.setFuncoin(T.toString());
 			order.setTomember(active.getCreator());
-			order.setProduct(0);
+			order.setProduct(Integer.valueOf(String.valueOf(active.getId())));
 			order.setAutoTime(new Date());
 			order.setProductType("E");
 			order.setRemark("庄家投注胜利赢钱");
 			orderDao.insert(order);
 			
 			
-		    for (Betting bet : betList) {
-				Double memberWinMoney = (bet.getBetMoney().doubleValue() / betMoneyCount.doubleValue())*(betMoneyCount-T) + bet.getBetMoney();
+		    for (Map<String, Object> bet : betList) {
+		    	Double betMoney = Double.valueOf(String.valueOf(bet.get("bet_money")));
+				Double memberWinMoney = (betMoney / betMoneyCount.doubleValue())*(betMoneyCount-T) + betMoney;
 				//玩家获利
 				order = new Order();
 				order.setNo(sdf.format(new Date()).replace("-", "") + commentsUtil.getRandomString());
 				order.setStatus("3");
 				order.setMember(10);
 				order.setFuncoin(memberWinMoney.toString());
-				order.setTomember(bet.getMember());
+				order.setTomember(Integer.valueOf(String.valueOf(bet.get("member"))));
 				order.setProduct(Integer.parseInt(String.valueOf(active.getId())));
 				order.setAutoTime(new Date());
 				order.setProductType("E");
@@ -161,9 +164,6 @@ public class OrderBalanceImpl  implements OrderBalance {
 			 Double cashMoney = 0.0;
 			 // 玩家对当前活动的总投注金额
 			 Double betMoneyCount = Double.valueOf(worksDao.betMoneyCount(active.getId().intValue()));
-			 
-			 // 查询胜利用户的投注数据，包含赔率
-			 List<Map<String, Object>> betList = betDao.winBetting(param);
 			 
 			 // 玩家获利
 			 for (Map<String, Object> map : betList) {
@@ -191,7 +191,7 @@ public class OrderBalanceImpl  implements OrderBalance {
 			order.setMember(10);
 			order.setFuncoin(creatorMoney.toString());
 			order.setTomember(active.getCreator());
-			order.setProduct(0);
+			order.setProduct(Integer.valueOf(String.valueOf(active.getId())));
 			order.setAutoTime(new Date());
 			order.setProductType("E");
 			if (creatorMoney >= 0) {
@@ -201,6 +201,8 @@ public class OrderBalanceImpl  implements OrderBalance {
 			}
 			orderDao.insert(order);
 		}
+		
+		
 	
 	
    }

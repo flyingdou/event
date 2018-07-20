@@ -103,6 +103,7 @@ public class WorksController {
 				String filename = commentsUtil.getRandomByDate(6) + ".jpg";
 				SaveImgByUrl.download(requestUrl, filename, "D:/java/picture");
 				imgs.add(filename);
+				
 			}
 			param.remove("imgs");
 			param.accumulate("imgs", imgs);

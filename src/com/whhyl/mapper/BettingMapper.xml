@@ -45,40 +45,29 @@
   
   
   <!-- 查询投注表中的获胜用户的投注记录  -->
-  <select id="winMemberBetting" parameterType="Map" resultMap="BaseResultMap" >
-    SELECT 
-	      b.id, b.active_id, b.contestant, b.member, sum(b.bet_money) as bet_money, b.auto_time  
-	FROM 
-		  tb_betting b, (select active_id, work_id from tb_active_work where value = 1) aw  
-	WHERE 
-		  b.active_id = aw.active_id 
-	AND 
-		  b.contestant = aw.work_id 
-    AND   
-          b.active_id = #{active_id}
-          
-	GROUP BY b.member 
+  <select id="winMemberBetting" parameterType="Map" resultType="Map" >
+    select 
+             b.id, b.active_id, b.contestant, b.member, SUM(b.bet_money) as bet_money, b.auto_time, aw.pay_rate  
+      from 
+	         tb_betting b 
+	         INNER JOIN  (
+							select 
+	                          		 aw.work_id, aw.pay_rate  
+							  from 
+									 tb_active a LEFT JOIN tb_active_work aw ON a.id = aw.active_id 
+			                 where 
+			                 	     a.id = #{active_id}  
+				          ORDER BY 
+				          		     aw.ranke asc 
+				              LIMIT 
+				              	     #{win_count}
+	
+						 ) aw ON b.contestant = aw.work_id 
+     where 
+            b.active_id = #{active_id}      
+  GROUP BY 
+  			member  
   </select>
-   
-   
-   <!-- 查询胜利用户的投注数据，包含赔率  -->
-   <select id="winBetting" parameterType="Map" resultType="Map" >
-	SELECT 
-	      b.id, b.active_id, b.contestant, b.member, sum(b.bet_money) as bet_money, b.auto_time, aw.pay_rate  
-	FROM 
-		  tb_betting b, (select active_id, work_id, pay_rate from tb_active_work where ISNULL(value) AND NOT ISNULL(ranke) ) aw  
-	WHERE 
-		  b.active_id = aw.active_id 
-	AND 
-		  b.contestant = aw.work_id 
-    AND   
-          b.active_id = #{active_id}
-		  
-	GROUP BY b.member 
-   </select>
-    
-  
-  
   
   
   

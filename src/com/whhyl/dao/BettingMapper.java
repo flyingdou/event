@@ -59,11 +59,7 @@ public interface BettingMapper {
 	/**
 	 * 查询投注表中的获胜用户的投注记录
 	 */
-	List<Betting> winMemberBetting (Map<String, Object> map);
+	List<Map<String, Object>> winMemberBetting (Map<String, Object> map);
 	
 	
-	/**
-	 * 查询胜利用户的投注数据，包含赔率
-	 */
-	List<Map<String, Object>> winBetting(Map<String, Object> map);
 }
