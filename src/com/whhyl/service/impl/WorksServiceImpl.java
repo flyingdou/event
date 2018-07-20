@@ -149,7 +149,7 @@ public class WorksServiceImpl implements WorksService {
 		// 发送模版消息
 		JSONObject urlParam = new JSONObject();
 		urlParam.accumulate("id", works.getId());
-		String url = "http://funcoin.cardcol.com/workDetail.jsp?param=" + urlParam.toString();
+		String url = "";
 		JSONObject dataJson = new JSONObject();
 		dataJson.accumulate("first", new JSONObject().accumulate("value", "作品发布成功!"))
 				.accumulate("keyword1", new JSONObject().accumulate("value", "方孔活动"))
