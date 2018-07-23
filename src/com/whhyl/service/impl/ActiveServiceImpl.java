@@ -141,16 +141,25 @@ public class ActiveServiceImpl implements ActiveService {
 				//  查询当前活动的专家信息
 				List<Map<String, Object>> expertList = activeDao.getExpertByActive(active.getId());
 				
-				// 给专家发送微信模板通知
+				// 给专家、裁判发送微信模板通知
 				WechatManager wechatManager = new WechatManager(Constants.APP_ID, Constants.APP_SECRET);
 				String template_id = Constants.ACTIVE_AUDIT_RESULT;
 				String url = "http://funcoin.cardcol.com/active/activeDetail.html";
-				
+				String firstStr = "";
 				// 循环发送微信模板通知
 				for (Map<String, Object> map : expertList) {
 					String openid = String.valueOf(map.get("wechat_id"));
+					String role = String.valueOf(map.get("role"));
 					JSONObject dataJson = new JSONObject();
-					dataJson.accumulate("first", new JSONObject().accumulate("value", "你已被选择为 '"+ active.getName() +"'的专家，请关注该活动。"))
+					if (Constants.EXPERT_ROLE.equals(role)) {
+						firstStr = "你已被选择为 '"+ active.getName() +"'的专家，请关注该活动。";
+					}
+					
+					if (Constants.REFEREE_ROLE.equals(role)) {
+						firstStr = "你已被选择为'" + active.getName() + "'的裁判，请关注该活动。";
+					}
+					
+					dataJson.accumulate("first", new JSONObject().accumulate("value", firstStr))
 					        .accumulate("keyword1", new JSONObject().accumulate("value", active.getName()))
 					        .accumulate("keyword2", new JSONObject().accumulate("value", "审核通过"))
 					        .accumulate("remark", new JSONObject().accumulate("value", "祝你生活愉快！"))

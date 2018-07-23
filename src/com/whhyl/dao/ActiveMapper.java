@@ -73,7 +73,7 @@ public interface ActiveMapper {
 	List<Map<String, Object>> getActiveTobeUpdate ();
 	
 	/**
-	 * 查询当前活动的专家信息
+	 * 查询当前活动的专家、裁判信息
 	 */
 	List<Map<String, Object>> getExpertByActive (Long active_id);
 	

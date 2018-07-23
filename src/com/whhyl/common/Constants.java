@@ -89,4 +89,14 @@ public class Constants {
 	 */
 	public final static String WORK_RELEASE_COMPLETE = "rZAZO3JpAjFum2N5bL8TKx7tQ3dHUKPHoahRs3TJqN4";
 	
+	/**
+	 * 专家角色
+	 */
+	public final static String EXPERT_ROLE = "E";
+	
+	/**
+	 * 裁判角色
+	 */
+	public final static String REFEREE_ROLE = "R";
+	
 }
