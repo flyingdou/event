@@ -99,4 +99,20 @@ public class Constants {
 	 */
 	public final static String REFEREE_ROLE = "R";
 	
+	/**
+	 * 结算完成跳转url
+	 */
+	public final static String BALANCE_COMPLETE_URL = "";
+	
+	/**
+	 * 活动审核结果跳转url
+	 */
+	public final static String ACTIVE_AUDIT_RESULT_URL = "http://funcoin.cardcol.com/active/activeDetail.html";
+	
+	/**
+	 * 作品发布完成url
+	 */
+	public final static String WORK_RELEASE_COMPLETE_URL = "";
+	
+	
 }

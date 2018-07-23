@@ -1,5 +1,6 @@
 package com.whhyl.service.impl;
 
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -144,7 +145,9 @@ public class ActiveServiceImpl implements ActiveService {
 				// 给专家、裁判发送微信模板通知
 				WechatManager wechatManager = new WechatManager(Constants.APP_ID, Constants.APP_SECRET);
 				String template_id = Constants.ACTIVE_AUDIT_RESULT;
-				String url = "http://funcoin.cardcol.com/active/activeDetail.html";
+				JSONObject json = new JSONObject();
+				json.accumulate("id", active.getId());
+				String url = Constants.ACTIVE_AUDIT_RESULT_URL + "?json=" + URLEncoder.encode(json.toString(), "UTF-8");
 				String firstStr = "";
 				// 循环发送微信模板通知
 				for (Map<String, Object> map : expertList) {
