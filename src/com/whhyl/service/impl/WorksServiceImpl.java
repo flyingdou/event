@@ -118,7 +118,7 @@ public class WorksServiceImpl implements WorksService {
 	/**
 	 * 发布作品
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "unused" })
 	@Override
 	public JSONObject releaseWorks(JSONObject param) {
 		JSONObject result = new JSONObject();
