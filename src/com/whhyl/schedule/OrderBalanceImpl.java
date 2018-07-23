@@ -14,13 +14,21 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.whhyl.common.Constants;
 import com.whhyl.dao.ActiveMapper;
 import com.whhyl.dao.BettingMapper;
+import com.whhyl.dao.MemberMapper;
 import com.whhyl.dao.OrderMapper;
 import com.whhyl.dao.WorksMapper;
 import com.whhyl.entity.Active;
+import com.whhyl.entity.Member;
 import com.whhyl.entity.Order;
 import com.whhyl.util.commentsUtil;
+import com.whhyl.wechatApi.SendTemplateRequest;
+import com.whhyl.wechatApi.WechatManager;
+
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 /**
  * 投注结算业务 
  * @author dou
@@ -45,6 +53,9 @@ public class OrderBalanceImpl  implements OrderBalance {
 	
 	@Autowired
 	private ActiveMapper activeDao;
+	
+	@Autowired
+	private MemberMapper memberDao;
 	
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 	
@@ -113,6 +124,7 @@ public class OrderBalanceImpl  implements OrderBalance {
    @Override
    public void balanceData(Active active) {
 	    
+	    // 获利用户订单
 	    Order order = new Order();
 	    Map<String, Object> param = new HashMap<String, Object> ();
 	    param.put("active_id", active.getId());
@@ -121,25 +133,34 @@ public class OrderBalanceImpl  implements OrderBalance {
 	    //查询当前获胜用户投注的数据
 	    List<Map<String, Object>> betList = betDao.winMemberBetting(param);
 	    
+	    // 查询庄家
+	    Member creator = memberDao.selectByPrimaryKey(Long.valueOf(String.valueOf(active.getCreator())));
+	    
+	    // 庄家订单
+	    Order cretorOrder = new Order();
+	    
+	    // 胜利用户参数
+	    JSONArray winnerParam = new JSONArray();
+	    
 	    // 按注分润
 		if ("0".equals(active.getBalanceType())){
 		    Integer betMoneyCount = worksDao.betMoneyCount(active.getId().intValue());
 		    
 		    //庄家获利
 	    	Double T = betMoneyCount.doubleValue() *0.2;
-	    	order = new Order();
-	    	order.setNo(sdf.format(new Date()).replace("-", "") + commentsUtil.getRandomString());
-	    	order.setStatus("3");
-			order.setMember(10);
-			order.setFuncoin(T.toString());
-			order.setTomember(active.getCreator());
-			order.setProduct(Integer.valueOf(String.valueOf(active.getId())));
-			order.setAutoTime(new Date());
-			order.setProductType("E");
-			order.setRemark("庄家投注胜利赢钱");
-			orderDao.insert(order);
+	    	cretorOrder = new Order();
+	    	cretorOrder.setNo(sdf.format(new Date()).replace("-", "") + commentsUtil.getRandomString());
+	    	cretorOrder.setStatus("3");
+	    	cretorOrder.setMember(10);
+	    	cretorOrder.setFuncoin(T.toString());
+			cretorOrder.setTomember(active.getCreator());
+			cretorOrder.setProduct(Integer.valueOf(String.valueOf(active.getId())));
+			cretorOrder.setAutoTime(new Date());
+			cretorOrder.setProductType("E");
+			cretorOrder.setRemark("庄家投注胜利赢钱");
+			orderDao.insert(cretorOrder);
 			
-			
+			winnerParam = new JSONArray();
 		    for (Map<String, Object> bet : betList) {
 		    	Double betMoney = Double.valueOf(String.valueOf(bet.get("bet_money")));
 				Double memberWinMoney = (betMoney / betMoneyCount.doubleValue())*(betMoneyCount-T) + betMoney;
@@ -155,6 +176,14 @@ public class OrderBalanceImpl  implements OrderBalance {
 				order.setProductType("E");
 				order.setRemark("玩家投注胜利赢钱");
 				orderDao.insert(order);
+				// 查询当前用户余额
+				Double balanceFuncoin = orderDao.queryBalance(Integer.valueOf(String.valueOf(bet.get("member"))));
+				JSONObject winParam = new JSONObject();
+				winParam.accumulate("openid", bet.get("wechat_id"))
+				        .accumulate("funcoin", order.getFuncoin())
+				        .accumulate("balance", balanceFuncoin)
+				        ;
+				winnerParam.add(winParam);
 			}
        }
    
@@ -165,6 +194,7 @@ public class OrderBalanceImpl  implements OrderBalance {
 			 // 玩家对当前活动的总投注金额
 			 Double betMoneyCount = Double.valueOf(worksDao.betMoneyCount(active.getId().intValue()));
 			 
+			 winnerParam = new JSONArray();
 			 // 玩家获利
 			 for (Map<String, Object> map : betList) {
 				Double memberWinMoney = (Double.valueOf(String.valueOf(map.get("bet_money"))))*Double.valueOf(String.valueOf(map.get("pay_rate")))/100;
@@ -181,27 +211,87 @@ public class OrderBalanceImpl  implements OrderBalance {
 				order.setRemark("玩家投注胜利赢钱");
 				orderDao.insert(order);
 				cashMoney += memberWinMoney;
+				
+				// 查询当前用户余额
+				Double balanceFuncoin = orderDao.queryBalance(Integer.valueOf(String.valueOf(map.get("member"))));
+				JSONObject winParam = new JSONObject();
+				winParam.accumulate("openid", map.get("wechat_id"))
+				        .accumulate("funcoin", order.getFuncoin())
+				        .accumulate("balance", balanceFuncoin)
+				        ;
+				winnerParam.add(winParam);
 			}
 			 
 			// 活动发起人订单数据，获利或赔钱
 			Double creatorMoney = betMoneyCount - cashMoney;
-			order = new Order();
-	    	order.setNo(sdf.format(new Date()).replace("-", "") + commentsUtil.getRandomString());
-	    	order.setStatus("3");
-			order.setMember(10);
-			order.setFuncoin(creatorMoney.toString());
-			order.setTomember(active.getCreator());
-			order.setProduct(Integer.valueOf(String.valueOf(active.getId())));
-			order.setAutoTime(new Date());
-			order.setProductType("E");
+			cretorOrder = new Order();
+			cretorOrder.setNo(sdf.format(new Date()).replace("-", "") + commentsUtil.getRandomString());
+			cretorOrder.setStatus("3");
+			cretorOrder.setMember(10);
+			cretorOrder.setFuncoin(creatorMoney.toString());
+			cretorOrder.setTomember(active.getCreator());
+			cretorOrder.setProduct(Integer.valueOf(String.valueOf(active.getId())));
+			cretorOrder.setAutoTime(new Date());
+			cretorOrder.setProductType("E");
 			if (creatorMoney >= 0) {
-				order.setRemark("庄家开庄赢钱");
+				cretorOrder.setRemark("庄家开庄赢钱");
 			} else {
-				order.setRemark("庄家开庄赔钱");
+				cretorOrder.setRemark("庄家开庄赔钱");
 			}
-			orderDao.insert(order);
+			orderDao.insert(cretorOrder);
 		}
 		
+		// 数据持久化完成，无异常，再来发送微信模板消息
+		// 准备发送结算通知
+	    WechatManager wechatManager = new WechatManager(Constants.APP_ID, Constants.APP_SECRET);
+	    String url = Constants.BALANCE_COMPLETE_URL;
+	    String template_id = Constants.BALANCE_COMPLETE;
+	    String openid = "";
+	    JSONObject dataJson = new JSONObject();
+	    // 庄家本次订单的交易金额，可正可负
+		Double cf = Double.valueOf(cretorOrder.getFuncoin());
+		
+		// 查询庄家当前余额
+		Double balanceFuncoin = orderDao.queryBalance(cretorOrder.getMember());
+		
+		// first提示语
+		String first = "您在'" + active.getName() + "'活动中的结算结果如下: ";
+		
+		String remark = "";
+		// 获利
+		if (cf > 0) {
+			remark = "恭喜您，本次赢得奖励！";
+		} else {
+			remark = "本次未获利，再接再厉！";
+		}
+	    openid = creator.getWechatId();
+		dataJson.accumulate("first", new JSONObject().accumulate("value", first))
+		        .accumulate("keyword1", new JSONObject().accumulate("value", commentsUtil.dateFormat(new Date(), "yyyy-MM-dd HH:mm")))
+		        .accumulate("keyword2", new JSONObject().accumulate("value", cretorOrder.getFuncoin() + "FC"))
+		        .accumulate("keyword3", new JSONObject().accumulate("value", balanceFuncoin + "FC"))
+		        .accumulate("remark", new JSONObject().accumulate("value", remark))
+		        ;
+		
+		// 给庄家发送结算完成通知
+		SendTemplateRequest sendTemplateRequest = new SendTemplateRequest(openid, template_id, url, dataJson);
+		wechatManager.sendTemplateMessage(sendTemplateRequest);
+		
+		
+		// 给获胜用户发结算通知
+		for (Object object : winnerParam) {
+			JSONObject winner = JSONObject.fromObject(object);
+			openid = winner.getString("openid");
+			dataJson = new JSONObject();
+			remark = "恭喜您，赢得奖励！";
+			dataJson.accumulate("first", new JSONObject().accumulate("value", first))
+			        .accumulate("keyword1", new JSONObject().accumulate("value", commentsUtil.dateFormat(new Date(), "yyyy-MM-dd HH:mm")))
+			        .accumulate("keyword2", new JSONObject().accumulate("value", winner.getString("funcoin")) + "FC")
+			        .accumulate("keyword3", new JSONObject().accumulate("value", winner.getString("balance")) + "FC")
+			        .accumulate("remark", new JSONObject().accumulate("value", remark))
+			        ;
+			sendTemplateRequest = new SendTemplateRequest(openid, template_id, url, dataJson); 
+			wechatManager.sendTemplateMessage(sendTemplateRequest);
+		}
 		
 	
 	

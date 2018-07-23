@@ -47,7 +47,8 @@
   <!-- 查询投注表中的获胜用户的投注记录  -->
   <select id="winMemberBetting" parameterType="Map" resultType="Map" >
     select 
-             b.id, b.active_id, b.contestant, b.member, SUM(b.bet_money) as bet_money, b.auto_time, aw.pay_rate  
+             b.id, b.active_id, b.contestant, b.member, SUM(b.bet_money) as bet_money, b.auto_time, 
+             aw.pay_rate, m.wechat_id   
       from 
 	         tb_betting b 
 	         INNER JOIN  (
@@ -63,6 +64,7 @@
 				              	     #{win_count}
 	
 						 ) aw ON b.contestant = aw.work_id 
+		      LEFT JOIN tb_member m ON b.member = m.id
      where 
             b.active_id = #{active_id}      
   GROUP BY 

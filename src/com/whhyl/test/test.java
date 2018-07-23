@@ -1,10 +1,5 @@
 package com.whhyl.test;
 
-import java.net.URLEncoder;
-
-import com.qq.connect.utils.json.JSONObject;
-import com.whhyl.common.Constants;
-
 /**
  * 测试类
  * 
@@ -22,8 +17,10 @@ public class test {
 //		String access_token = json.getString("access_token");
 //		System.out.println(access_token);
 		
-	    String encodeStr = Constants.ACTIVE_AUDIT_RESULT_URL + "?json=" + URLEncoder.encode(new JSONObject().accumulate("id", 72).toString(), "UTF-8");
-	    System.err.println(encodeStr);
+
+	     
+		
+		
 	}
 
 }

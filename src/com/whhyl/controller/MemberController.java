@@ -181,7 +181,6 @@ public class MemberController {
 
 	/**
 	 * 我的钱包
-	 * 
 	 * @return
 	 */
 	@RequestMapping("/myWallet")
@@ -200,6 +199,18 @@ public class MemberController {
 		}
 		return ret;
 	}
+	
+	
+	/**
+	 * 用于前台用户点击跳转到我的钱包中
+	 * @return
+	 */
+	@RequestMapping("/gotoMyWallet")
+	public String gotoMyWallet () {
+		return "wdqb.jsp";
+	}
+	
+	
 
 	/**
 	 * 获取用户(选择裁判)

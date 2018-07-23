@@ -102,7 +102,7 @@ public class Constants {
 	/**
 	 * 结算完成跳转url
 	 */
-	public final static String BALANCE_COMPLETE_URL = "";
+	public final static String BALANCE_COMPLETE_URL = "http://funcoin.cardcol.com/member/gotoMyWallet.html";
 	
 	/**
 	 * 活动审核结果跳转url

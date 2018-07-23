@@ -269,7 +269,6 @@
 			</div>
 		</div>
 		<div class="footer">
-				<!-- <a class="goBack" onclick="javascript:history.go(-1)">&lt; 返回</a> -->
 				<a href="event/give.jsp" class="give">赠送</a>
 				<a href="event/recharge.jsp" class="recharge">充值</a>
 			</div>
