@@ -18,19 +18,17 @@
 // 载入函数
 $(function () {
 	
-	var loginResult = ${loginResult == null ? "" : loginResult};
-	console.log(loginResult);
-	if (!loginResult == "" && !loginResult.success) {
-		alert('请您先关注本公众号，再操作！');
-		return;
-	}
 	var page = {
 		     status : ${status == null ? 0 : status},
-		     upUrl : "${upUrl}"
+		     upUrl : "${upUrl}",
+		     loginResult: ${loginResult == null ? 0 : loginResult}
 		};
 
-		
-		   
+	    console.log(page.loginResult);
+		if (page.loginResult != 0 && !page.loginResult.success) {
+			alert('请您先关注本公众号，再操作！');
+			return;
+		}
 		if(page.status == 0){
 			sessionStorage.upUrl = page.upUrl;
 			location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxbc83d7dbb3a30e14&redirect_uri=http://funcoin.cardcol.com/wechatLogin.html&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect';
