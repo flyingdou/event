@@ -20,87 +20,82 @@ import net.sf.json.JSONObject;
 
 /**
  * 登录控制器
+ * 
  * @author Administrator
  *
  */
 @Controller
 public class LoginController {
-	
+
 	@Autowired
 	private LoginService loginService;
-	
-	
+
 	@RequestMapping("/login")
 	@ResponseBody
-	public JSONObject login(String json,HttpSession session){
+	public JSONObject login(String json, HttpSession session) {
 		JSONObject ret = new JSONObject();
 		try {
 			Member member = null;
-			JSONObject obj  = JSONObject.fromObject(URLDecoder.decode(json, "UTF-8"));
-			System.err.println("登录参数："+obj.toString());
+			JSONObject obj = JSONObject.fromObject(URLDecoder.decode(json, "UTF-8"));
+			System.err.println("登录参数：" + obj.toString());
 			member = loginService.login(obj);
-			
-			if(member != null){
-				//登录成功
+
+			if (member != null) {
+				// 登录成功
 				session.setAttribute("member", member);
 				ret.accumulate("success", true).accumulate("message", "登录成功");
 			} else {
-				//登陆失败，提示用户用户名或密码错误
+				// 登陆失败，提示用户用户名或密码错误
 				ret.accumulate("success", false).accumulate("message", "用户名或密码错误，请重新登录");
 			}
-			
-				
+
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
-		
+
 		return ret;
-		
+
 	}
-	
-	
+
 	/**
 	 * 简易登录
+	 * 
 	 * @param id
 	 * @param session
 	 * @return
 	 */
 	@RequestMapping("/simpleLogin")
 	@ResponseBody
-	public JSONObject simpleLogin(String id, HttpSession session){
+	public JSONObject simpleLogin(String id, HttpSession session) {
 		JSONObject ret = new JSONObject();
 		try {
 			Member member = null;
-			//默认1用户登录
-			if (StringUtils.isEmpty(id)){
+			// 默认1用户登录
+			if (StringUtils.isEmpty(id)) {
 				id = "1";
 			}
 			member = loginService.simpleLogin(id);
 			session.setAttribute("member", member);
-			ret.accumulate("success", true)
-			   .accumulate("msg", "登录成功！")
-			   .accumulate("id", member.getId())
-			   ;
-			
+			ret.accumulate("success", true).accumulate("msg", "登录成功！").accumulate("id", member.getId());
+
 		} catch (Exception e) {
 			e.printStackTrace();
-		}		
+		}
 		return ret;
 	}
-	
-	
+
 	/**
 	 * 微信登录,(微信回调方法)
 	 */
 	@RequestMapping("/wechatLogin")
-	public void wechatLogin (HttpServletRequest request, HttpServletResponse response) {
+	public void wechatLogin(HttpServletRequest request, HttpServletResponse response) {
 		try {
 			JSONObject ret = new JSONObject();
 			// 获取微信返回的code
 			String code = request.getParameter("code");
 			JSONObject obj = new JSONObject();
 			obj.accumulate("code", code);
-			// 调用微信登录业务接口 
+			// 调用微信登录业务接口
 			ret = loginService.wechatLogin(obj, request);
 			if (ret.containsKey("openId") && ret.get("openId") != null) {
 				// 登录成功
@@ -110,9 +105,9 @@ public class LoginController {
 				response.sendRedirect("event/requestOpenid.jsp");
 			} else if (ret.containsKey("subscribe")) {
 				// 该用户暂未关注本公众号，应该跳转到本公众号二维码页面，让用户关注
-				
-				
-				
+				request.getSession().setAttribute("loginResult", ret);
+				response.sendRedirect("event/requestOpenid.jsp");
+
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
