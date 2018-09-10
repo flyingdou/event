@@ -58,7 +58,7 @@
   <!-- 查询用户余额 -->
   <select id="queryBalance" resultType="Double" parameterType="java.lang.Integer">
 	select (IFNULL(i.income,0) - IFNULL(o.outcome,0)) as balance 
-		from (select sum(funcoin) income from tb_order where status = 1 and toMember = #{member}) i, 
+		from (select sum(funcoin) income from tb_order where status in (1,3) and toMember = #{member}) i, 
 		(select sum(funcoin) outcome from tb_order where status = 1 and member = #{member}) o 
 
   </select>
