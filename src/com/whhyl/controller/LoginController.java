@@ -97,9 +97,9 @@ public class LoginController {
 			obj.accumulate("code", code);
 			// 调用微信登录业务接口
 			ret = loginService.wechatLogin(obj, request);
+			request.getSession().setAttribute("status", 1);
 			if (ret.containsKey("openId") && ret.get("openId") != null) {
 				// 登录成功
-				request.getSession().setAttribute("status", 1);
 				request.getSession().setAttribute("openId", ret.get("openId"));
 				// 跳转登录页面
 			} else if (ret.containsKey("subscribe")) {

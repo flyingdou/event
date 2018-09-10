@@ -27,12 +27,13 @@ $(function () {
 		     loginResult: ${loginResult == null ? 0 : loginResult}
 		};
 
-		if (page.loginResult != 0 && !page.loginResult.success) {
+	    alert(JSON.stringify(page));
+		if (page.status == 1 && page.loginResult != 0 && !page.loginResult.success) {
 			alert('请您先关注本公众号，再操作！');
 			page = {};
 			// 跳转到公众号二维码页面
-			location.href = 'event/funcoinQRCode.jsp';
 			return;
+			location.href = 'event/funcoinQRCode.jsp';
 		}
 		
 		if(page.status == 0){
