@@ -102,13 +102,11 @@ public class LoginController {
 				request.getSession().setAttribute("status", 1);
 				request.getSession().setAttribute("openId", ret.get("openId"));
 				// 跳转登录页面
-				response.sendRedirect("event/requestOpenid.jsp");
 			} else if (ret.containsKey("subscribe")) {
 				// 该用户暂未关注本公众号，应该跳转到本公众号二维码页面，让用户关注
-				request.getSession().setAttribute("loginResult", ret);
-				response.sendRedirect("event/requestOpenid.jsp");
-
 			}
+			request.getSession().setAttribute("loginResult", ret);
+			response.sendRedirect("event/requestOpenid.jsp");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

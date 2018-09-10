@@ -17,16 +17,19 @@
 
 // 载入函数
 $(function () {
+	
+	var loginResult = ${loginResult == null ? "" : loginResult};
+	console.log(loginResult);
+	if (!loginResult == "" && !loginResult.success) {
+		alert('请您先关注本公众号，再操作！');
+		return;
+	}
 	var page = {
 		     status : ${status == null ? 0 : status},
-		     upUrl : "${upUrl}",
-		     loginResult : ${loginResult == null ? false : true}
+		     upUrl : "${upUrl}"
 		};
 
-		if (!page.loginResult) {
-			alert('请您先关注本公众号，再操作！');
-			return;
-		}
+		
 		   
 		if(page.status == 0){
 			sessionStorage.upUrl = page.upUrl;
