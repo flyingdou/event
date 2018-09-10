@@ -20,20 +20,21 @@
 
 // 载入函数
 $(function () {
-	
+	var status = ${status == null ? 0 :status};
+	var loginResult = ${loginResult == null ? 0 : loginResult};
 	var page = {
-		     status : ${status == null ? 0 : status},
+		     status : status,
 		     upUrl : "${upUrl}",
-		     loginResult: ${loginResult == null ? 0 : loginResult}
+		     loginResult: loginResult
 		};
 
-	    alert(JSON.stringify(page));
+	    console.log(page);
 		if (page.status == 1 && page.loginResult != 0 && !page.loginResult.success) {
 			alert('请您先关注本公众号，再操作！');
 			page = {};
 			// 跳转到公众号二维码页面
-			return;
 			location.href = 'event/funcoinQRCode.jsp';
+			return;
 		}
 		
 		if(page.status == 0){
