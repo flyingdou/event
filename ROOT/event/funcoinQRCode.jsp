@@ -13,6 +13,20 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 <title>关注方孔微信公众号</title>
 <script type="text/javascript" src="event/js/jquery.min.js"></script>
+<style type="text/css">
+
+.content{
+	margin: 0;
+	padding: 0;
+
+}
+
+.reminder{
+   	text-align: center;
+}
+
+
+</style>
 </head>
 <body>
 
