@@ -26,6 +26,7 @@ $(function () {
 
 		if (page.loginResult != 0 && !page.loginResult.success) {
 			alert('请您先关注本公众号，再操作！');
+			page = {};
 			// 跳转到公众号二维码页面
 			location.href = 'event/funcoinQRCode.jsp';
 			return;
@@ -33,10 +34,12 @@ $(function () {
 		
 		if(page.status == 0){
 			sessionStorage.upUrl = page.upUrl;
+			page = {};
 			location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxbc83d7dbb3a30e14&redirect_uri=http://funcoin.cardcol.com/wechatLogin.html&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect';
 		}else if(page.status == 1){
 			var upUrl = sessionStorage.upUrl;
 			sessionStorage.removeItem("upUrl");
+			page = {};
 			location.href = upUrl;
 		}
 	
